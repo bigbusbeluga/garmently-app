@@ -16,10 +16,10 @@ DEBUG = False
 
 # Add your production domain here
 ALLOWED_HOSTS = [
+    'garmently-backend.herokuapp.com',  # Replace with your actual Heroku app name
     'your-domain.com',
-    'www.your-domain.com',
-    'your-app.herokuapp.com',  # If using Heroku
-    'your-app.vercel.app',     # If using Vercel
+    'www.your-domain.com', 
+    'your-app.vercel.app',     # If using Vercel for frontend
     'localhost',               # For local testing
     '127.0.0.1',              # For local testing
 ]
@@ -52,8 +52,9 @@ X_FRAME_OPTIONS = 'DENY'
 
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
-    "https://your-frontend-domain.com",
-    "https://www.your-frontend-domain.com",
+    "https://your-frontend-domain.vercel.app",  # Replace with your actual Vercel app
+    "https://your-frontend-domain.netlify.app", # Or Netlify app
+    "https://localhost:3000",  # For local testing
     # Add your production frontend URLs here
 ]
 
