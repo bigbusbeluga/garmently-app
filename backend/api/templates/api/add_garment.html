@@ -1,0 +1,94 @@
+{% extends 'api/base.html' %}
+
+{% block title %}Add Garment - Garmently{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-plus me-2"></i>Add New Garment</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">Name *</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.category.id_for_label }}" class="form-label">Category *</label>
+                            {{ form.category }}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.color.id_for_label }}" class="form-label">Color *</label>
+                            {{ form.color }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.size.id_for_label }}" class="form-label">Size *</label>
+                            {{ form.size }}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.brand.id_for_label }}" class="form-label">Brand</label>
+                            {{ form.brand }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.price.id_for_label }}" class="form-label">Price *</label>
+                            {{ form.price }}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.season.id_for_label }}" class="form-label">Season</label>
+                            {{ form.season }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.purchase_date.id_for_label }}" class="form-label">Purchase Date</label>
+                            {{ form.purchase_date }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.material.id_for_label }}" class="form-label">Material</label>
+                        {{ form.material }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                        {{ form.description }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.care_instructions.id_for_label }}" class="form-label">Care Instructions</label>
+                        {{ form.care_instructions }}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="{{ form.image.id_for_label }}" class="form-label">Image</label>
+                        {{ form.image }}
+                        <div class="form-text">Upload a photo of your garment. Images will be stored securely on AWS S3.</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'wardrobe' %}" class="btn btn-outline-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Save Garment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

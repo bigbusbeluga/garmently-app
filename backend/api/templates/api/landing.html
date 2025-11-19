@@ -1,0 +1,58 @@
+{% extends 'api/base.html' %}
+
+{% block title %}Welcome to Garmently{% endblock %}
+
+{% block content %}
+<div class="container text-center">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="hero-section py-5">
+                <h1 class="display-4 mb-4">
+                    <i class="fas fa-tshirt text-primary me-3"></i>
+                    Welcome to Garmently
+                </h1>
+                <p class="lead mb-5">Your smart digital wardrobe manager. Organize your clothes, create outfits, and never wonder what to wear again!</p>
+                
+                <div class="row mb-5">
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <i class="fas fa-closet-closed fa-3x text-primary mb-3"></i>
+                                <h5>Organize Wardrobe</h5>
+                                <p class="card-text">Keep track of all your garments with photos, categories, and details.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                                <h5>Create Outfits</h5>
+                                <p class="card-text">Mix and match your clothes to create perfect outfits for any occasion.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <i class="fas fa-soap fa-3x text-primary mb-3"></i>
+                                <h5>Laundry Tracker</h5>
+                                <p class="card-text">Keep track of what's clean, dirty, or in the wash.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{% url 'signup' %}" class="btn btn-primary btn-lg me-md-2">
+                        <i class="fas fa-user-plus me-2"></i>Get Started
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

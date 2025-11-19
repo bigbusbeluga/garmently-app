@@ -1,7 +1,10 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
+    icon = models.CharField(max_length=50, blank=True, help_text="CSS icon class")
+    description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -9,6 +12,7 @@ class Category(models.Model):
     
     class Meta:
         verbose_name_plural = "Categories"
+        ordering = ['name']
 
 class Garment(models.Model):
     SIZE_CHOICES = [
@@ -20,39 +24,153 @@ class Garment(models.Model):
         ('XXL', 'Double Extra Large'),
     ]
     
+    SEASON_CHOICES = [
+        ('spring', 'Spring'),
+        ('summer', 'Summer'),
+        ('autumn', 'Autumn'),
+        ('winter', 'Winter'),
+        ('all', 'All Seasons'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('clean', 'Clean'),
+        ('dirty', 'Dirty'),
+        ('washing', 'In Laundry'),
+        ('damaged', 'Damaged'),
+    ]
+    
+    # Basic Information
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    
+    # Physical Properties
     color = models.CharField(max_length=50)
     size = models.CharField(max_length=3, choices=SIZE_CHOICES)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
     brand = models.CharField(max_length=100, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     
-    # S3 Image field
+    # Image - S3 Upload
     image = models.ImageField(upload_to='garments/', blank=True, null=True)
     
-    # Additional fields
+    # Clothing Attributes
+    season = models.CharField(max_length=10, choices=SEASON_CHOICES, default='all')
+    material = models.CharField(max_length=100, blank=True)
+    care_instructions = models.TextField(blank=True)
+    
+    # Status and Usage
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='clean')
     is_favorite = models.BooleanField(default=False)
     times_worn = models.PositiveIntegerField(default=0)
     last_worn = models.DateField(blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
     
+    # User Association (for multi-user support)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    
+    # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f"{self.name} - {self.color} ({self.size})"
     
+    def is_available(self):
+        """Check if garment is available to wear"""
+        return self.status == 'clean'
+    
+    def mark_worn(self):
+        """Mark garment as worn and update statistics"""
+        from django.utils import timezone
+        self.times_worn += 1
+        self.last_worn = timezone.now().date()
+        self.save()
+    
     class Meta:
         ordering = ['-created_at']
 
 class Outfit(models.Model):
+    OCCASION_CHOICES = [
+        ('casual', 'Casual'),
+        ('work', 'Work'),
+        ('formal', 'Formal'),
+        ('party', 'Party'),
+        ('date', 'Date'),
+        ('exercise', 'Exercise'),
+        ('travel', 'Travel'),
+        ('special', 'Special Event'),
+    ]
+    
     name = models.CharField(max_length=200)
-    garments = models.ManyToManyField(Garment)
-    occasion = models.CharField(max_length=100, blank=True)
-    season = models.CharField(max_length=50, blank=True)
+    garments = models.ManyToManyField(Garment, related_name='outfits')
+    occasion = models.CharField(max_length=20, choices=OCCASION_CHOICES, blank=True)
+    season = models.CharField(max_length=10, choices=Garment.SEASON_CHOICES, blank=True)
     notes = models.TextField(blank=True)
+    
+    # Rating and feedback
+    rating = models.PositiveSmallIntegerField(null=True, blank=True, help_text="Rate 1-5 stars")
+    is_favorite = models.BooleanField(default=False)
+    times_worn = models.PositiveIntegerField(default=0)
+    last_worn = models.DateField(blank=True, null=True)
+    
+    # User Association
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    
+    # Weather/Date information
+    weather = models.CharField(max_length=100, blank=True)
+    date = models.DateField(blank=True, null=True)
+    
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.name
+    
+    def get_garment_count(self):
+        """Get number of garments in this outfit"""
+        return self.garments.count()
+    
+    def is_complete(self):
+        """Check if outfit has at least one garment"""
+        return self.garments.exists()
+    
+    class Meta:
+        ordering = ['-created_at']
+
+class LaundryItem(models.Model):
+    """Track items in laundry"""
+    garment = models.ForeignKey(Garment, on_delete=models.CASCADE)
+    wash_date = models.DateField(auto_now_add=True)
+    estimated_completion = models.DateField(null=True, blank=True)
+    is_completed = models.BooleanField(default=False)
+    completion_date = models.DateField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+    
+    def __str__(self):
+        return f"Laundry: {self.garment.name}"
+    
+    def complete_wash(self):
+        """Mark laundry as completed"""
+        from django.utils import timezone
+        self.is_completed = True
+        self.completion_date = timezone.now().date()
+        self.garment.status = 'clean'
+        self.garment.save()
+        self.save()
+
+class WearHistory(models.Model):
+    """Track when garments and outfits were worn"""
+    garment = models.ForeignKey(Garment, on_delete=models.CASCADE, null=True, blank=True)
+    outfit = models.ForeignKey(Outfit, on_delete=models.CASCADE, null=True, blank=True)
+    date_worn = models.DateField(auto_now_add=True)
+    occasion = models.CharField(max_length=100, blank=True)
+    weather = models.CharField(max_length=100, blank=True)
+    rating = models.PositiveSmallIntegerField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+    
+    def __str__(self):
+        item = self.garment or self.outfit
+        return f"{item} worn on {self.date_worn}"
+    
+    class Meta:
+        ordering = ['-date_worn']

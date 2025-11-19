@@ -1,0 +1,167 @@
+{% extends 'api/base.html' %}
+
+{% block title %}Dashboard - Garmently{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h1>
+    <a href="{% url 'add_garment' %}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Add Garment
+    </a>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-tshirt fa-2x text-primary mb-2"></i>
+                <h3 class="card-title">{{ total_garments }}</h3>
+                <p class="card-text">Total Garments</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                <h3 class="card-title">{{ clean_garments }}</h3>
+                <p class="card-text">Clean Items</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-soap fa-2x text-warning mb-2"></i>
+                <h3 class="card-title">{{ dirty_garments }}</h3>
+                <p class="card-text">Dirty Items</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-heart fa-2x text-danger mb-2"></i>
+                <h3 class="card-title">{{ favorite_garments }}</h3>
+                <p class="card-text">Favorites</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Garments -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Garments</h5>
+                <a href="{% url 'wardrobe' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_garments %}
+                    <div class="list-group list-group-flush">
+                        {% for garment in recent_garments %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    {% if garment.image %}
+                                        <img src="{{ garment.image.url }}" alt="{{ garment.name }}" 
+                                             class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="bg-secondary rounded me-3 d-flex align-items-center justify-content-center" 
+                                             style="width: 50px; height: 50px;">
+                                            <i class="fas fa-tshirt text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-0">{{ garment.name }}</h6>
+                                        <small class="text-muted">{{ garment.category.name }} • {{ garment.color }}</small>
+                                    </div>
+                                </div>
+                                <span class="badge bg-{% if garment.status == 'clean' %}success{% elif garment.status == 'dirty' %}warning{% else %}info{% endif %}">
+                                    {{ garment.get_status_display }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-3">No garments yet. <a href="{% url 'add_garment' %}">Add your first garment!</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Outfits -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-users me-2"></i>Recent Outfits</h5>
+                <a href="{% url 'outfits' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_outfits %}
+                    <div class="list-group list-group-flush">
+                        {% for outfit in recent_outfits %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ outfit.name }}</h6>
+                                        <small class="text-muted">
+                                            {{ outfit.get_garment_count }} items
+                                            {% if outfit.occasion %} • {{ outfit.get_occasion_display }}{% endif %}
+                                        </small>
+                                    </div>
+                                    {% if outfit.is_favorite %}
+                                        <i class="fas fa-heart text-danger"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-3">No outfits yet. <a href="{% url 'create_outfit' %}">Create your first outfit!</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'add_garment' %}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-plus mb-2 d-block"></i>
+                            Add Garment
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'create_outfit' %}" class="btn btn-outline-success w-100">
+                            <i class="fas fa-users mb-2 d-block"></i>
+                            Create Outfit
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'laundry' %}" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-soap mb-2 d-block"></i>
+                            Laundry ({{ laundry_items }})
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'mixmatch' %}" class="btn btn-outline-info w-100">
+                            <i class="fas fa-magic mb-2 d-block"></i>
+                            Mix & Match
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
