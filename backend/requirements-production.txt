@@ -1,22 +1,11 @@
-# Production Requirements
-# Add these to your requirements.txt for production deployment
-
-# Core Django and dependencies (already in your requirements.txt)
-Django>=5.2.7
-djangorestframework
-django-cors-headers
-python-dotenv
-
-# S3 Storage (already in your requirements.txt)
-boto3
-django-storages
-
-# Production-specific packages
-gunicorn>=20.1.0          # WSGI server for production
-dj-database-url>=2.0.0    # Database URL parsing
-psycopg2-binary>=2.9.0    # PostgreSQL adapter
-whitenoise>=6.0.0         # Static file serving
-
-# Optional: For monitoring and error tracking
-# sentry-sdk>=1.0.0
-# django-extensions>=3.0.0
+Django==5.2.7
+djangorestframework==3.15.2
+django-cors-headers==4.4.0
+python-dotenv==1.0.1
+Pillow==10.4.0
+boto3==1.35.36
+django-storages==1.14.4
+gunicorn==23.0.0
+psycopg2-binary==2.9.10
+whitenoise==6.8.2
+dj-database-url==2.3.0

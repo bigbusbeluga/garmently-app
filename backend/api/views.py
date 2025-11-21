@@ -1,19 +1,24 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.db.models import Q, Count
 from django.http import JsonResponse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.authtoken.models import Token
 from .models import Category, Garment, Outfit, LaundryItem, WearHistory
-from .serializers import CategorySerializer, GarmentSerializer, OutfitSerializer
+from .serializers import (
+    CategorySerializer, GarmentSerializer, OutfitSerializer,
+    UserSerializer, RegisterSerializer, LoginSerializer
+)
 from .forms import (
     GarmentForm, OutfitForm, CategoryForm, LaundryForm, 
     QuickAddGarmentForm, SearchForm, CustomUserCreationForm
@@ -246,6 +251,77 @@ def signup(request):
 
 # ==================== API VIEWS (REST Framework) ====================
 
+# Authentication Endpoints
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register(request):
+    """Register a new user"""
+    print(f"Registration attempt with data: {request.data}")  # Debug log
+    serializer = RegisterSerializer(data=request.data)
+    if serializer.is_valid():
+        try:
+            user = serializer.save()
+            token, created = Token.objects.get_or_create(user=user)
+            print(f"User registered successfully: {user.username}")  # Debug log
+            return Response({
+                'token': token.key,
+                'user': UserSerializer(user).data,
+                'message': 'User registered successfully'
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            print(f"Error during user creation: {str(e)}")  # Debug log
+            return Response({
+                'error': str(e),
+                'detail': 'Failed to create user'
+            }, status=status.HTTP_400_BAD_REQUEST)
+    
+    print(f"Validation errors: {serializer.errors}")  # Debug log
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login_view(request):
+    """Login user and return token"""
+    print(f"Login attempt with data: {request.data}")  # Debug log
+    serializer = LoginSerializer(data=request.data)
+    if serializer.is_valid():
+        username = serializer.validated_data['username']
+        password = serializer.validated_data['password']
+        user = authenticate(username=username, password=password)
+        
+        if user:
+            token, created = Token.objects.get_or_create(user=user)
+            print(f"User logged in successfully: {user.username}")  # Debug log
+            return Response({
+                'token': token.key,
+                'user': UserSerializer(user).data,
+                'message': 'Login successful'
+            })
+        print(f"Authentication failed for username: {username}")  # Debug log
+        return Response(
+            {'error': 'Invalid username or password'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+    print(f"Login validation errors: {serializer.errors}")  # Debug log
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout_view(request):
+    """Logout user by deleting token"""
+    try:
+        request.user.auth_token.delete()
+        return Response({'message': 'Logout successful'})
+    except:
+        return Response({'error': 'Something went wrong'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def current_user(request):
+    """Get current authenticated user"""
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
+
 @api_view(['GET'])
 def hello_world(request):
     """Simple API endpoint to test connection between React and Django"""
@@ -271,24 +347,20 @@ def api_status(request):
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [AllowAny]  # Categories can be viewed by anyone
 
 class GarmentViewSet(ModelViewSet):
     queryset = Garment.objects.all()
     serializer_class = GarmentSerializer
+    permission_classes = [IsAuthenticated]  # Require authentication
     
     def get_queryset(self):
-        """Filter garments by user if authenticated"""
-        queryset = self.queryset
-        if self.request.user.is_authenticated:
-            queryset = queryset.filter(owner=self.request.user)
-        return queryset
+        """Filter garments by authenticated user only"""
+        return self.queryset.filter(owner=self.request.user)
     
     def perform_create(self, serializer):
         """Set owner when creating garment"""
-        if self.request.user.is_authenticated:
-            serializer.save(owner=self.request.user)
-        else:
-            serializer.save()
+        serializer.save(owner=self.request.user)
     
     @action(detail=False, methods=['get'])
     def by_category(self, request):
@@ -321,38 +393,29 @@ class GarmentViewSet(ModelViewSet):
 class OutfitViewSet(ModelViewSet):
     queryset = Outfit.objects.all()
     serializer_class = OutfitSerializer
+    permission_classes = [IsAuthenticated]  # Require authentication
     
     def get_queryset(self):
-        """Filter outfits by user if authenticated"""
-        queryset = self.queryset
-        if self.request.user.is_authenticated:
-            queryset = queryset.filter(owner=self.request.user)
-        return queryset
+        """Filter outfits by authenticated user only"""
+        return self.queryset.filter(owner=self.request.user)
     
     def perform_create(self, serializer):
         """Set owner when creating outfit"""
-        if self.request.user.is_authenticated:
-            serializer.save(owner=self.request.user)
-        else:
-            serializer.save()
+        serializer.save(owner=self.request.user)
 
 # Legacy endpoint for compatibility
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def garments(request):
-    """Legacy garments endpoint for backward compatibility"""
+    """Legacy garments endpoint for backward compatibility (requires authentication)"""
     if request.method == 'GET':
-        garments = Garment.objects.all()
-        if request.user.is_authenticated:
-            garments = garments.filter(owner=request.user)
-        serializer = GarmentSerializer(garments, many=True)
+        garments = Garment.objects.filter(owner=request.user)
+        serializer = GarmentSerializer(garments, many=True, context={'request': request})
         return Response(serializer.data)
     
     elif request.method == 'POST':
-        serializer = GarmentSerializer(data=request.data)
+        serializer = GarmentSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            if request.user.is_authenticated:
-                serializer.save(owner=request.user)
-            else:
-                serializer.save()
+            serializer.save(owner=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

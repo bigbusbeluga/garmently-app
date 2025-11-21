@@ -8,6 +8,36 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'email']
 
+class RegisterSerializer(serializers.ModelSerializer):
+    """Serializer for user registration"""
+    password = serializers.CharField(write_only=True, min_length=8)
+    password2 = serializers.CharField(write_only=True, min_length=8)
+    
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password', 'password2', 'first_name', 'last_name']
+    
+    def validate(self, data):
+        if data['password'] != data['password2']:
+            raise serializers.ValidationError({"password": "Passwords must match."})
+        return data
+    
+    def create(self, validated_data):
+        validated_data.pop('password2')
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data.get('email', ''),
+            password=validated_data['password'],
+            first_name=validated_data.get('first_name', ''),
+            last_name=validated_data.get('last_name', '')
+        )
+        return user
+
+class LoginSerializer(serializers.Serializer):
+    """Serializer for user login"""
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
 class CategorySerializer(serializers.ModelSerializer):
     garment_count = serializers.SerializerMethodField()
     
@@ -47,7 +77,15 @@ class GarmentSerializer(serializers.ModelSerializer):
     
     def get_image_url(self, obj):
         if obj.image:
-            return obj.image.url
+            url = obj.image.url
+            print(f"Image URL for {obj.name}: {url}")
+            # If using S3, the URL should be complete
+            # If using local storage, we might need to add the domain
+            request = self.context.get('request')
+            if request and not url.startswith('http'):
+                return request.build_absolute_uri(url)
+            return url
+        print(f"No image for {obj.name}")
         return None
 
 class GarmentSummarySerializer(serializers.ModelSerializer):
@@ -65,7 +103,11 @@ class GarmentSummarySerializer(serializers.ModelSerializer):
     
     def get_image_url(self, obj):
         if obj.image:
-            return obj.image.url
+            url = obj.image.url
+            request = self.context.get('request')
+            if request and not url.startswith('http'):
+                return request.build_absolute_uri(url)
+            return url
         return None
 
 class OutfitSerializer(serializers.ModelSerializer):

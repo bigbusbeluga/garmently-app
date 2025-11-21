@@ -13,6 +13,12 @@ api_urlpatterns = [
     # API Router URLs
     path('api/', include(router.urls)),
     
+    # Authentication endpoints
+    path('api/auth/register/', views.register, name='api_register'),
+    path('api/auth/login/', views.login_view, name='api_login'),
+    path('api/auth/logout/', views.logout_view, name='api_logout'),
+    path('api/auth/user/', views.current_user, name='current_user'),
+    
     # Legacy endpoints
     path('api/hello/', views.hello_world, name='hello_world'),
     path('api/status/', views.api_status, name='api_status'),
