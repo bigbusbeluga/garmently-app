@@ -7,6 +7,8 @@ import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import Inventory from './components/Inventory';
 import AddGarment from './components/AddGarment';
+import MixMatch from './components/MixMatch';
+import Outfits from './components/Outfits';
 import './App.css';
 
 // Layout Component with Sidebar
@@ -93,16 +95,6 @@ function Layout({ children }) {
 }
 
 // Placeholder components for other pages
-function Outfits() {
-  return (
-    <div className="page-placeholder">
-      <i className="fas fa-users fa-4x"></i>
-      <h2>Outfits</h2>
-      <p>Create and manage your outfit combinations</p>
-    </div>
-  );
-}
-
 function Laundry() {
   return (
     <div className="page-placeholder">
@@ -113,15 +105,7 @@ function Laundry() {
   );
 }
 
-function MixMatch() {
-  return (
-    <div className="page-placeholder">
-      <i className="fas fa-magic fa-4x"></i>
-      <h2>Mix & Match</h2>
-      <p>Generate outfit suggestions</p>
-    </div>
-  );
-}
+
 
 function AppRoutes() {
   return (

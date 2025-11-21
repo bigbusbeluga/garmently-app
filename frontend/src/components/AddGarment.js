@@ -23,6 +23,8 @@ function AddGarment() {
   });
   const [imagePreview, setImagePreview] = useState(null);
   const [error, setError] = useState(null);
+  const [removingBg, setRemovingBg] = useState(false);
+  const [originalImage, setOriginalImage] = useState(null);
 
   useEffect(() => {
     fetchCategories();
@@ -48,6 +50,7 @@ function AddGarment() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setOriginalImage(file);
       setFormData(prev => ({
         ...prev,
         image: file
@@ -59,6 +62,140 @@ function AddGarment() {
         setImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const removeBackground = async () => {
+    if (!originalImage) return;
+
+    setRemovingBg(true);
+    setError(null);
+
+    try {
+      // Use remove.bg API
+      const formData = new FormData();
+      formData.append('image_file', originalImage);
+      formData.append('size', 'auto');
+
+      const response = await fetch('https://api.remove.bg/v1.0/removebg', {
+        method: 'POST',
+        headers: {
+          'X-Api-Key': 'S4VY4wdgg43h4nvdE3M6KnSD',
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Remove.bg error:', errorData);
+        
+        // Fallback: Use client-side canvas processing for basic background removal
+        await removeBackgroundCanvas();
+        return;
+      }
+
+      const blob = await response.blob();
+      const file = new File([blob], originalImage.name.replace(/\.[^/.]+$/, '') + '.png', { type: 'image/png' });
+      
+      setFormData(prev => ({
+        ...prev,
+        image: file
+      }));
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+
+    } catch (error) {
+      console.error('Error removing background:', error);
+      
+      // Try fallback method
+      try {
+        await removeBackgroundCanvas();
+      } catch (fallbackError) {
+        console.error('Fallback error:', fallbackError);
+        setError('Failed to remove background. Please get a free API key from remove.bg/api');
+      }
+    } finally {
+      setRemovingBg(false);
+    }
+  };
+
+  const removeBackgroundCanvas = async () => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        // Draw the image
+        ctx.drawImage(img, 0, 0);
+
+        // Get image data
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        // Simple background removal: make white/light pixels transparent
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          
+          // If pixel is very light (near white), make it transparent
+          const brightness = (r + g + b) / 3;
+          if (brightness > 240) {
+            data[i + 3] = 0; // Set alpha to 0 (transparent)
+          }
+        }
+
+        // Put modified image data back
+        ctx.putImageData(imageData, 0, 0);
+
+        // Convert canvas to blob
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const file = new File([blob], originalImage.name.replace(/\.[^/.]+$/, '') + '.png', { type: 'image/png' });
+            
+            setFormData(prev => ({
+              ...prev,
+              image: file
+            }));
+
+            // Create preview
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              setImagePreview(reader.result);
+              resolve();
+            };
+            reader.readAsDataURL(file);
+          } else {
+            reject(new Error('Failed to create blob'));
+          }
+        }, 'image/png');
+      };
+      
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = imagePreview;
+    });
+  };
+
+  const restoreOriginal = () => {
+    if (originalImage) {
+      setFormData(prev => ({
+        ...prev,
+        image: originalImage
+      }));
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(originalImage);
     }
   };
 
@@ -268,11 +405,40 @@ function AddGarment() {
               accept="image/*"
             />
             <small className="form-text">
-              Upload a photo of your garment. Images will be stored securely on AWS S3.
+              Upload a photo of your garment. For best results with background removal, use images with solid/light backgrounds.
+              Get a free API key from <a href="https://www.remove.bg/users/sign_up" target="_blank" rel="noopener noreferrer">remove.bg</a> for better results.
             </small>
             {imagePreview && (
-              <div className="image-preview">
-                <img src={imagePreview} alt="Preview" />
+              <div className="image-preview-container">
+                <div className="image-preview">
+                  <img src={imagePreview} alt="Preview" />
+                </div>
+                <div className="bg-remove-actions">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-magic"
+                    onClick={removeBackground}
+                    disabled={removingBg}
+                  >
+                    {removingBg ? (
+                      <>
+                        <i className="fas fa-spinner fa-spin"></i> Removing Background...
+                      </>
+                    ) : (
+                      <>
+                        <i className="fas fa-magic"></i> Remove Background
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-secondary"
+                    onClick={restoreOriginal}
+                    disabled={removingBg}
+                  >
+                    <i className="fas fa-undo"></i> Restore Original
+                  </button>
+                </div>
               </div>
             )}
           </div>
