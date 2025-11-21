@@ -63,7 +63,8 @@ function Signup() {
       console.error('Error response:', err.response);
       
       // In demo mode, if there's any error, just register them anyway
-      if (!process.env.REACT_APP_API_URL) {
+      const USE_DEMO = true; // Hardcoded for deployment
+      if (USE_DEMO) {
         console.log('Demo mode: bypassing error and registering');
         const demoUser = { 
           username: formData.username, 
