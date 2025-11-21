@@ -22,6 +22,7 @@ ALLOWED_HOSTS = [
     'your-app.vercel.app',     # If using Vercel for frontend
     'localhost',               # For local testing
     '127.0.0.1',              # For local testing
+    '.railway.app',           # Allow all Railway subdomains
 ]
 
 # Production database - Use PostgreSQL instead of SQLite
