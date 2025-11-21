@@ -118,6 +118,13 @@ export const apiService = {
   // Garments
   getGarments: async () => {
     if (USE_MOCK_DATA) {
+      // Load from localStorage if available
+      const stored = localStorage.getItem('demo_garments');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        mockGarments.length = 0;
+        mockGarments.push(...parsed);
+      }
       return mockGarments;
     }
     const response = await api.get('/garments/');
@@ -134,17 +141,37 @@ export const apiService = {
 
   createGarment: async (formData) => {
     if (USE_MOCK_DATA) {
+      // Convert image to base64 for storage
+      const file = formData.get('image');
+      let imageUrl = 'https://via.placeholder.com/300x300/CCCCCC/FFFFFF?text=No+Image';
+      
+      if (file) {
+        try {
+          const reader = new FileReader();
+          imageUrl = await new Promise((resolve) => {
+            reader.onload = (e) => resolve(e.target.result);
+            reader.readAsDataURL(file);
+          });
+        } catch (err) {
+          console.error('Error reading image:', err);
+        }
+      }
+      
       const newGarment = {
         id: mockGarments.length + 1,
         name: formData.get('name'),
-        category_name: 'Tops',
+        category_name: formData.get('category') || 'Tops',
         color: formData.get('color'),
         size: formData.get('size'),
+        brand: formData.get('brand') || '',
+        image_url: imageUrl,
         status: 'clean',
         is_favorite: false,
         times_worn: 0,
       };
       mockGarments.push(newGarment);
+      // Save to localStorage
+      localStorage.setItem('demo_garments', JSON.stringify(mockGarments));
       return newGarment;
     }
     const response = await api.post('/garments/', formData, {
@@ -160,6 +187,8 @@ export const apiService = {
       const index = mockGarments.findIndex(g => g.id === id);
       if (index !== -1) {
         mockGarments[index] = { ...mockGarments[index], ...Object.fromEntries(formData) };
+        // Save to localStorage
+        localStorage.setItem('demo_garments', JSON.stringify(mockGarments));
         return mockGarments[index];
       }
     }
@@ -175,6 +204,8 @@ export const apiService = {
     if (USE_MOCK_DATA) {
       const index = mockGarments.findIndex(g => g.id === id);
       if (index !== -1) mockGarments.splice(index, 1);
+      // Save to localStorage
+      localStorage.setItem('demo_garments', JSON.stringify(mockGarments));
       return { success: true };
     }
     const response = await api.delete(`/garments/${id}/`);
@@ -184,7 +215,11 @@ export const apiService = {
   wearGarment: async (id) => {
     if (USE_MOCK_DATA) {
       const garment = mockGarments.find(g => g.id === id);
-      if (garment) garment.times_worn++;
+      if (garment) {
+        garment.times_worn++;
+        // Save to localStorage
+        localStorage.setItem('demo_garments', JSON.stringify(mockGarments));
+      }
       return garment;
     }
     const response = await api.post(`/garments-api/${id}/wear/`);
@@ -203,6 +238,13 @@ export const apiService = {
   // Outfits
   getOutfits: async () => {
     if (USE_MOCK_DATA) {
+      // Load from localStorage if available
+      const stored = localStorage.getItem('demo_outfits');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        mockOutfits.length = 0;
+        mockOutfits.push(...parsed);
+      }
       return mockOutfits;
     }
     const response = await api.get('/outfits/');
@@ -229,6 +271,8 @@ export const apiService = {
         is_favorite: false,
       };
       mockOutfits.push(newOutfit);
+      // Save to localStorage
+      localStorage.setItem('demo_outfits', JSON.stringify(mockOutfits));
       return newOutfit;
     }
     const response = await api.post('/outfits/', data);
@@ -240,6 +284,8 @@ export const apiService = {
       const index = mockOutfits.findIndex(o => o.id === id);
       if (index !== -1) {
         mockOutfits[index] = { ...mockOutfits[index], ...data };
+        // Save to localStorage
+        localStorage.setItem('demo_outfits', JSON.stringify(mockOutfits));
         return mockOutfits[index];
       }
     }
@@ -251,6 +297,8 @@ export const apiService = {
     if (USE_MOCK_DATA) {
       const index = mockOutfits.findIndex(o => o.id === id);
       if (index !== -1) mockOutfits.splice(index, 1);
+      // Save to localStorage
+      localStorage.setItem('demo_outfits', JSON.stringify(mockOutfits));
       return { success: true };
     }
     const response = await api.delete(`/outfits/${id}/`);
