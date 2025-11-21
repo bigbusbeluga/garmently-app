@@ -1,6 +1,7 @@
 """
 Production settings for Garmently app.
 This file contains production-specific configurations.
+Updated: Trigger fresh deployment with new PostgreSQL database.
 """
 
 from .settings import *
