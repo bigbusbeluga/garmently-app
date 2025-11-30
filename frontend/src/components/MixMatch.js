@@ -40,9 +40,16 @@ function MixMatch() {
   const fetchCategories = async () => {
     try {
       const data = await apiService.getCategories();
-      setCategories(['All', ...data.map(cat => cat.name)]);
+      if (Array.isArray(data) && data.length > 0) {
+        setCategories(['All', ...data.map(cat => cat.name)]);
+      } else {
+        console.warn('No categories returned, using fallback');
+        setCategories(['All']);
+      }
     } catch (err) {
       console.error('Error fetching categories:', err);
+      // Fallback to just 'All' if fetch fails
+      setCategories(['All']);
     }
   };
 

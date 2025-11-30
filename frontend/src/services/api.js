@@ -247,8 +247,21 @@ export const apiService = {
     if (USE_MOCK_DATA) {
       return mockCategories;
     }
-    const response = await api.get('/api/categories/');
-    return response.data;
+    try {
+      console.log('Fetching categories from:', `${API_BASE_URL}/api/categories/`);
+      const response = await api.get('/api/categories/');
+      console.log('Categories response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch categories:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: error.config?.url
+      });
+      // Return empty array as fallback so UI doesn't break
+      return [];
+    }
   },
 
   // Outfits

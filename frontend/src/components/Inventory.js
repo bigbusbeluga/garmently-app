@@ -39,11 +39,17 @@ function Inventory() {
       const data = await apiService.getCategories();
       console.log('Fetched categories:', data);
       // Build category list: All, Favorites, then actual categories from DB
-      const categoryNames = data.map(cat => cat.name);
-      setCategories(['All', 'Favorites', ...categoryNames]);
+      if (Array.isArray(data) && data.length > 0) {
+        const categoryNames = data.map(cat => cat.name);
+        setCategories(['All', 'Favorites', ...categoryNames]);
+      } else {
+        console.warn('No categories returned, using fallback');
+        setCategories(['All', 'Favorites']);
+      }
     } catch (err) {
       console.error('Error fetching categories:', err);
       // Fallback to default categories if fetch fails
+      setCategories(['All', 'Favorites']);
     }
   };
 

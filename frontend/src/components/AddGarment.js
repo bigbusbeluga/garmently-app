@@ -38,11 +38,21 @@ function AddGarment() {
       console.log('Fetched categories:', data);
       console.log('Categories type:', typeof data, 'Is array:', Array.isArray(data));
       console.log('Categories length:', data?.length);
-      setCategories(data);
-      console.log('Categories state updated');
+      
+      // Ensure we have an array
+      if (Array.isArray(data)) {
+        setCategories(data);
+        console.log('Categories state updated with', data.length, 'categories');
+      } else {
+        console.error('Categories data is not an array:', data);
+        setCategories([]);
+        setError('Failed to load categories. Please refresh the page.');
+      }
     } catch (error) {
       console.error('Error fetching categories:', error);
       console.error('Error details:', error.response?.data, error.message);
+      setCategories([]);
+      setError('Failed to load categories. Please check your connection and try again.');
     }
   };
 
