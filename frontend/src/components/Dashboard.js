@@ -51,6 +51,7 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
+        <img src="/images/logo.png" alt="Garmently" style={{ width: '40px', height: '40px', marginRight: '1rem', verticalAlign: 'middle' }} />
         <h1><i className="fas fa-tachometer-alt"></i> Dashboard</h1>
       </div>
 

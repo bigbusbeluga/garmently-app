@@ -236,7 +236,7 @@ function AddGarment() {
     <div className="add-garment-page">
       <div className="form-card">
         <div className="form-header">
-          <h2><i className="fas fa-plus"></i> Add New Garment</h2>
+          <h2><img src="/images/logo.png" alt="Garmently" style={{ width: '32px', height: '32px', marginRight: '0.8rem', verticalAlign: 'middle' }} /><i className="fas fa-plus"></i> Add New Garment</h2>
         </div>
         
         <form onSubmit={handleSubmit} className="garment-form">

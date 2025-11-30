@@ -69,7 +69,7 @@ function Outfits() {
   return (
     <div className="outfits-page">
       <div className="outfits-header">
-        <h1><i className="fas fa-users"></i> My Outfits</h1>
+        <h1><img src="/images/logo.png" alt="Garmently" style={{ width: '35px', height: '35px', marginRight: '0.8rem', verticalAlign: 'middle' }} /><i className="fas fa-users"></i> My Outfits</h1>
         <p>View and manage your saved outfit combinations</p>
       </div>
 

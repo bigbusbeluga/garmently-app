@@ -66,7 +66,7 @@ function Inventory() {
   return (
     <div className="wardrobe-page">
       <div className="wardrobe-header">
-        <h1><i className="fas fa-tshirt"></i> My Wardrobe</h1>
+        <h1><img src="/images/logo.png" alt="Garmently" style={{ width: '35px', height: '35px', marginRight: '0.8rem', verticalAlign: 'middle' }} /><i className="fas fa-tshirt"></i> My Wardrobe</h1>
         <Link to="/add-garment" className="btn btn-add-minimal" title="Add Garment">
           <i className="fas fa-plus"></i>
         </Link>

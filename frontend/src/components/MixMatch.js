@@ -191,7 +191,7 @@ function MixMatch() {
   return (
     <div className="mixmatch-page">
       <div className="mixmatch-header">
-        <h1><i className="fas fa-magic"></i> Mix & Match</h1>
+        <h1><img src="/images/logo.png" alt="Garmently" style={{ width: '35px', height: '35px', marginRight: '0.8rem', verticalAlign: 'middle' }} /><i className="fas fa-magic"></i> Mix & Match</h1>
         <p>Drag and drop garments to create your perfect outfit</p>
       </div>
 

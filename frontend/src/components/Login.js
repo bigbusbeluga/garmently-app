@@ -60,6 +60,7 @@ function Login() {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
+          <img src="/images/logo.png" alt="Garmently Logo" style={{ width: '80px', height: '80px', marginBottom: '1rem' }} />
           <h1>Welcome Back</h1>
           <p>Login to your Garmently account</p>
         </div>
