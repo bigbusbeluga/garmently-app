@@ -8,3 +8,6 @@ python manage.py collectstatic --noinput
 
 # Run migrations
 python manage.py migrate
+
+# Setup default categories
+python manage.py setup_categories
