@@ -33,10 +33,16 @@ function AddGarment() {
 
   const fetchCategories = async () => {
     try {
+      console.log('About to call apiService.getCategories()...');
       const data = await apiService.getCategories();
+      console.log('Fetched categories:', data);
+      console.log('Categories type:', typeof data, 'Is array:', Array.isArray(data));
+      console.log('Categories length:', data?.length);
       setCategories(data);
+      console.log('Categories state updated');
     } catch (error) {
       console.error('Error fetching categories:', error);
+      console.error('Error details:', error.response?.data, error.message);
     }
   };
 

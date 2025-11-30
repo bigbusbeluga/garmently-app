@@ -96,7 +96,7 @@ function MixMatch() {
   };
 
   const handleCanvasItemDrag = (e) => {
-    if (!draggingItem || e.clientX === 0 && e.clientY === 0) return;
+    if (!draggingItem || (e.clientX === 0 && e.clientY === 0)) return;
     
     const canvas = document.querySelector('.outfit-canvas');
     if (!canvas) return;
@@ -183,11 +183,11 @@ function MixMatch() {
     try {
       const response = await apiService.getAIOutfitRecommendations(theme);
       setAiRecommendations(response);
-      setMessage({ type: 'success', text: `Got ${response.outfits?.length || 0} AI recommendations!` });
+      setMessage({ type: 'success', text: `Got ${response.outfits?.length || 0} magical recommendations!` });
       setTimeout(() => setMessage(null), 3000);
     } catch (err) {
       console.error('Error getting AI recommendations:', err);
-      setMessage({ type: 'error', text: 'Failed to get AI recommendations. Try again later.' });
+      setMessage({ type: 'error', text: 'Failed to get recommendations. Try again later.' });
     } finally {
       setLoadingAI(false);
     }
@@ -210,7 +210,7 @@ function MixMatch() {
     setOutfitName(outfit.name);
     setOutfitNotes(`${outfit.reasoning}\n\nStyle Tip: ${outfit.style_tip}`);
     setAiRecommendations(null);
-    setMessage({ type: 'success', text: 'AI outfit applied! Adjust items as needed.' });
+    setMessage({ type: 'success', text: 'Magical outfit applied! Adjust items as needed.' });
     setTimeout(() => setMessage(null), 3000);
   };
 
@@ -237,28 +237,28 @@ function MixMatch() {
 
       {/* AI Recommendation Section */}
       <div className="ai-section">
-        <h3><i className="fas fa-robot"></i> AI Outfit Assistant</h3>
+        <h3><i className="fas fa-magic"></i> Bibbidi-Bobbidi-Boo Outfit Assistant</h3>
         <p>Get personalized outfit recommendations based on themes:</p>
         <div className="ai-buttons">
           <button onClick={() => getAIRecommendations('casual school day')} disabled={loadingAI} className="btn btn-ai">
-            🎒 Casual School
+            Casual School
           </button>
           <button onClick={() => getAIRecommendations('date night')} disabled={loadingAI} className="btn btn-ai">
-            💕 Date Night
+            Date Night
           </button>
           <button onClick={() => getAIRecommendations('professional work')} disabled={loadingAI} className="btn btn-ai">
-            💼 Work Professional
+            Work Professional
           </button>
           <button onClick={() => getAIRecommendations('weekend brunch')} disabled={loadingAI} className="btn btn-ai">
-            🥞 Weekend Brunch
+            Weekend Brunch
           </button>
           <button onClick={() => getAIRecommendations('party outfit')} disabled={loadingAI} className="btn btn-ai">
-            🎉 Party Time
+            Party Time
           </button>
         </div>
         {loadingAI && (
           <div className="ai-loading">
-            <i className="fas fa-spinner fa-spin"></i> AI is creating outfit recommendations...
+            <i className="fas fa-spinner fa-spin"></i> Bibbidi-Bobbidi-Boo is creating outfit recommendations...
           </div>
         )}
       </div>
@@ -266,7 +266,7 @@ function MixMatch() {
       {/* AI Recommendations Display */}
       {aiRecommendations && aiRecommendations.outfits && (
         <div className="ai-recommendations">
-          <h3>✨ AI Recommended Outfits</h3>
+          <h3>✨ Bibbidi-Bobbidi-Boo Recommended Outfits</h3>
           <div className="recommendations-grid">
             {aiRecommendations.outfits.map((outfit, index) => (
               <div key={index} className="recommendation-card">

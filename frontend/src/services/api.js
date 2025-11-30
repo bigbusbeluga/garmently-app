@@ -351,7 +351,7 @@ export const apiService = {
         ]
       };
     }
-    const response = await api.post('/api/ai/outfit-recommendations/', { theme, weather });
+    const response = await api.post('/ai/outfit-recommendations/', { theme, weather });
     return response.data;
   },
 };
