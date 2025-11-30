@@ -1,13 +1,20 @@
 import axios from 'axios';
 
+// IMPORTANT: Must use full absolute URL with https://
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 const USE_MOCK_DATA = false; // Always use real API in production - set to true only for local demo
+
+// Validate URL format
+if (!API_BASE_URL.startsWith('http://') && !API_BASE_URL.startsWith('https://')) {
+  console.error('❌ API_BASE_URL must start with http:// or https://', API_BASE_URL);
+}
 
 // Debug: Log the configuration on startup
 console.log('API Configuration:', {
   API_BASE_URL,
   USE_MOCK_DATA,
-  env_value: process.env.REACT_APP_API_URL
+  env_value: process.env.REACT_APP_API_URL,
+  node_env: process.env.NODE_ENV
 });
 
 // Mock data for demo
