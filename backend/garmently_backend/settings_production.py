@@ -53,15 +53,8 @@ X_FRAME_OPTIONS = 'DENY'
 # CSRF_COOKIE_SECURE = True
 
 # CORS settings for production
-CORS_ALLOWED_ORIGINS = [
-    "https://your-frontend-domain.vercel.app",  # Replace with your actual Vercel app
-    "https://your-frontend-domain.netlify.app", # Or Netlify app
-    "https://localhost:3000",  # For local testing
-    # Add your production frontend URLs here
-]
-
-# Remove CORS_ALLOW_ALL_ORIGINS in production
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True  # Temporarily allow all origins for testing
+CORS_ALLOW_CREDENTIALS = True
 
 # Logging configuration for production
 LOGGING = {

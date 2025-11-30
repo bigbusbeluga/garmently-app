@@ -7,8 +7,14 @@
 
 .mixmatch-header {
   padding: 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: #1a202c;
   text-align: center;
 }
 
@@ -48,23 +54,28 @@
 .canvas-header h2 {
   margin: 0;
   font-size: 1.5rem;
+  color: #1a202c;
 }
 
 .outfit-canvas {
-  background: #f8f9fa;
-  border: 3px dashed #dee2e6;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 2px dashed rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
   min-height: 500px;
   height: 500px;
   padding: 1.5rem;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
 .outfit-canvas:hover {
-  border-color: #667eea;
-  background: #f0f2ff;
+  border-color: rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.08);
 }
 
 .canvas-placeholder {
@@ -73,17 +84,20 @@
   align-items: center;
   justify-content: center;
   height: 400px;
-  color: #adb5bd;
+  color: #4a5568;
 }
 
 .canvas-placeholder i {
   margin-bottom: 1rem;
-  opacity: 0.5;
+  opacity: 0.6;
+  font-size: 3rem;
+  color: #718096;
 }
 
 .canvas-placeholder p {
   font-size: 1.1rem;
   margin: 0;
+  font-weight: 500;
 }
 
 .canvas-items {
@@ -231,15 +245,19 @@
 
 /* Outfit Details Form */
 .outfit-details {
-  background: white;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .outfit-details h3 {
   margin: 0 0 1rem 0;
   font-size: 1.25rem;
+  color: #2d3748;
 }
 
 .form-group {
@@ -250,23 +268,32 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #495057;
+  color: #4a5568;
   font-size: 0.9rem;
 }
 
 .form-control {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
   font-size: 1rem;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #2d3748;
+}
+
+.form-control::placeholder {
+  color: #a0aec0;
 }
 
 .form-control:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #4a5568;
+  box-shadow: 0 0 0 3px rgba(74, 85, 104, 0.1);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 /* Garments Section */
@@ -286,6 +313,7 @@
 .garments-header h2 {
   margin: 0;
   font-size: 1.5rem;
+  color: #2d3748;
 }
 
 .garment-count {
@@ -307,6 +335,7 @@
 .category-filter label {
   font-weight: 600;
   white-space: nowrap;
+  color: #4a5568;
 }
 
 .garments-grid {
@@ -318,12 +347,15 @@
 
 .garment-card {
   position: relative;
-  background: white;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
   padding: 1rem;
   cursor: grab;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: all 0.2s;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+  transition: all 0.3s;
 }
 
 .garment-card:active {
@@ -331,13 +363,15 @@
 }
 
 .garment-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(31, 38, 135, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .garment-card.selected {
-  border: 2px solid #667eea;
-  background: #f0f2ff;
+  border: 2px solid #4a5568;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .garment-image {
@@ -369,20 +403,19 @@
   font-weight: 600;
   margin: 0 0 0.25rem 0;
   font-size: 0.9rem;
-  color: #333;
+  color: #2d3748;
 }
 
 .garment-info .garment-category {
-  margin: 0 0 0.25rem 0;
+  margin: 0;
   font-size: 0.8rem;
-  color: #667eea;
-  font-weight: 500;
+  color: #718096;
 }
 
 .garment-info .garment-details {
   margin: 0;
   font-size: 0.75rem;
-  color: #6c757d;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .selected-badge {
@@ -404,39 +437,49 @@
 /* Buttons */
 .btn {
   padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: white;
 }
 
 .btn:disabled {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  color: #4a5568;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .btn-secondary {
-  background: #6c757d;
-  color: white;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  color: #718096;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: #5a6268;
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
 }
 
 .btn-sm {
@@ -452,21 +495,24 @@
 /* Alert Messages */
 .alert {
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 15px;
   margin: 1rem 2rem;
   font-weight: 500;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .alert-success {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+  background: rgba(200, 230, 201, 0.8);
+  color: #2e7d32;
+  border-color: rgba(46, 125, 50, 0.3);
 }
 
 .alert-error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  background: rgba(255, 205, 210, 0.8);
+  color: #c62828;
+  border-color: rgba(198, 40, 40, 0.3);
 }
 
 /* Empty State */

@@ -7,8 +7,14 @@
 
 .outfits-header {
   padding: 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: #2d3748;
   text-align: center;
 }
 
@@ -42,10 +48,13 @@
 }
 
 .outfit-card {
-  background: white;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -53,25 +62,26 @@
 
 .outfit-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.12);
 }
 
 .outfit-card.selected {
-  border: 3px solid #667eea;
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+  border: 2px solid #4a5568;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
 .outfit-images {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2px;
-  background: #f8f9fa;
+  background: rgba(255, 255, 255, 0.05);
   height: 200px;
   position: relative;
 }
 
 .outfit-garment-preview {
-  background: white;
+  background: rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -127,6 +137,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: #2d3748;
 }
 
 .outfit-meta {
@@ -134,7 +145,7 @@
   gap: 1rem;
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
-  color: #6c757d;
+  color: #718096;
 }
 
 .outfit-meta span {
@@ -144,8 +155,11 @@
 }
 
 .outfit-occasion {
-  background: #667eea;
-  color: white;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #4a5568;
   padding: 0.2rem 0.6rem;
   border-radius: 12px;
   font-size: 0.8rem;
@@ -154,14 +168,14 @@
 .outfit-worn {
   margin: 0;
   font-size: 0.85rem;
-  color: #6c757d;
+  color: #a0aec0;
 }
 
 .outfit-actions {
   display: flex;
   gap: 0.5rem;
   padding: 1rem;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btn-action {
@@ -193,9 +207,12 @@
 /* Outfit Detail Panel */
 .outfit-detail-panel {
   width: 400px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -203,12 +220,12 @@
 
 .panel-header {
   padding: 1.5rem;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: rgba(255, 255, 255, 0.3);
+  color: #2d3748;
 }
 
 .panel-header h2 {
@@ -217,9 +234,11 @@
 }
 
 .close-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #4a5568;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -227,11 +246,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
 .close-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  transform: rotate(90deg);
 }
 
 .panel-content {
@@ -248,12 +268,15 @@
   display: block;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #495057;
+  color: #4a5568;
 }
 
 .occasion-badge {
-  background: #667eea;
-  color: white;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #4a5568;
   padding: 0.4rem 1rem;
   border-radius: 20px;
   font-size: 0.9rem;
@@ -262,7 +285,7 @@
 
 .notes-text {
   margin: 0;
-  color: #6c757d;
+  color: #718096;
   line-height: 1.6;
 }
 
@@ -277,8 +300,11 @@
   align-items: center;
   gap: 1rem;
   padding: 0.75rem;
-  background: #f8f9fa;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
 }
 
 .garment-detail-item img {
@@ -307,18 +333,18 @@
 .garment-detail-name {
   margin: 0 0 0.25rem 0;
   font-weight: 600;
-  color: #333;
+  color: #2d3748;
 }
 
 .garment-detail-meta {
   margin: 0;
   font-size: 0.85rem;
-  color: #6c757d;
+  color: #718096;
 }
 
 .panel-actions {
   padding: 1rem 1.5rem;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 /* Empty State */
@@ -339,12 +365,13 @@
 
 .empty-state h2 {
   margin: 0 0 0.5rem 0;
-  color: #6c757d;
+  color: #2d3748;
 }
 
 .empty-state p {
   margin: 0 0 1.5rem 0;
   font-size: 1.1rem;
+  color: #718096;
 }
 
 /* Buttons */
@@ -363,13 +390,17 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  color: #1a202c;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-weight: 600;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .btn-block {

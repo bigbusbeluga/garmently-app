@@ -66,8 +66,8 @@ function Inventory() {
     <div className="wardrobe-page">
       <div className="wardrobe-header">
         <h1><i className="fas fa-tshirt"></i> My Wardrobe</h1>
-        <Link to="/add-garment" className="btn btn-primary">
-          <i className="fas fa-plus"></i> Add Garment
+        <Link to="/add-garment" className="btn btn-add-minimal" title="Add Garment">
+          <i className="fas fa-plus"></i>
         </Link>
       </div>
 

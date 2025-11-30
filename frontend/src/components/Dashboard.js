@@ -51,9 +51,6 @@ function Dashboard() {
     <div className="dashboard-container">
       <div className="dashboard-header">
         <h1><i className="fas fa-tachometer-alt"></i> Dashboard</h1>
-        <Link to="/add-garment" className="btn btn-primary">
-          <i className="fas fa-plus"></i> Add Garment
-        </Link>
       </div>
 
       {/* Stats Cards */}

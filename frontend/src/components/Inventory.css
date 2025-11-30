@@ -10,12 +10,19 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
 }
 
 .wardrobe-header h1 {
   font-size: 28px;
   font-weight: bold;
-  color: #111827;
+  color: #1a202c;
   margin: 0;
   display: flex;
   align-items: center;
@@ -24,25 +31,58 @@
 
 .btn {
   padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s;
-}
-
-.btn-primary {
-  background: linear-gradient(45deg, #6366f1, #8b5cf6);
+  transition: all 0.3s;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   color: white;
 }
 
+.btn-primary {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  color: #1a202c;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
 .btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.btn-add-minimal {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  color: #1a202c;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.btn-add-minimal:hover {
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.btn-add-minimal i {
+  font-size: 16px;
 }
 
 /* Wardrobe Content Layout */
@@ -55,13 +95,21 @@
 .category-filter-sidebar {
   width: 200px;
   flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+  height: fit-content;
 }
 
 .filter-title {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 16px;
-  color: #111827;
+  color: #1a202c;
 }
 
 .filter-list {
@@ -77,26 +125,30 @@
   display: block;
   width: 100%;
   padding: 10px 16px;
-  border-radius: 6px;
-  background: white;
-  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   text-align: left;
-  color: #374151;
+  color: #4a5568;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   font-size: 14px;
 }
 
 .filter-item:hover {
-  background-color: #f9fafb;
-  border-color: #6366f1;
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.12);
+  transform: translateX(5px);
 }
 
 .filter-item.active {
-  background-color: #eff6ff;
-  color: #1d4ed8;
-  border-color: #6366f1;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2d3748;
+  border-color: rgba(0, 0, 0, 0.15);
   font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* Wardrobe Items */
@@ -122,17 +174,21 @@
 
 /* Garment Card */
 .garment-card {
-  background: white;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
   transition: all 0.3s;
   position: relative;
 }
 
 .garment-card:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(31, 38, 135, 0.3);
+  transform: translateY(-8px);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .status-badge-top {
@@ -140,26 +196,29 @@
   top: 10px;
   right: 10px;
   z-index: 10;
-  padding: 4px 12px;
+  padding: 6px 12px;
   border-radius: 12px;
   font-size: 12px;
   font-weight: 500;
   text-transform: capitalize;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .status-clean {
-  background-color: #d1fae5;
-  color: #065f46;
+  background: rgba(200, 230, 201, 0.6);
+  color: #2e7d32;
 }
 
 .status-dirty {
-  background-color: #fef3c7;
-  color: #92400e;
+  background: rgba(255, 224, 178, 0.6);
+  color: #e65100;
 }
 
 .status-washing {
-  background-color: #dbeafe;
-  color: #1e40af;
+  background: rgba(187, 222, 251, 0.6);
+  color: #1565c0;
 }
 
 .garment-image {
@@ -193,7 +252,7 @@
 .garment-name {
   font-size: 16px;
   font-weight: 600;
-  color: #111827;
+  color: #2d3748;
   margin: 0 0 8px;
   display: flex;
   justify-content: space-between;
@@ -201,8 +260,9 @@
 }
 
 .garment-name .fa-heart {
-  color: #ef4444;
+  color: #e53e3e;
   font-size: 14px;
+  filter: drop-shadow(0 2px 4px rgba(229, 62, 62, 0.3));
 }
 
 .garment-details {
@@ -211,7 +271,7 @@
 }
 
 .garment-details small {
-  color: #6b7280;
+  color: #718096;
   font-size: 13px;
 }
 

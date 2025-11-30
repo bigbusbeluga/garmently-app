@@ -11,7 +11,30 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f9fafb;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 50%, #f5f7fa 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  min-height: 100vh;
+  color: #1a202c;
+}
+
+/* Ensure good text contrast globally */
+h1, h2, h3, h4, h5, h6 {
+  color: #1a202c;
+}
+
+p, span, div, label {
+  color: #2d3748;
+}
+
+small {
+  color: #4a5568;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 code {
