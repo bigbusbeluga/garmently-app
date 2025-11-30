@@ -186,20 +186,16 @@ REST_FRAMEWORK = {
     ],
 }
 
-# CORS Configuration
+# CORS Configuration - Allow frontend to access API
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React development server
+    "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://garmently-app.vercel.app",  # Vercel production
-]
-
-# Allow specific Vercel preview URLs
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https://.*\.vercel\.app$",
+    "https://garmently-app.vercel.app",
+    "https://garmently-app-git-main-bigbusbelugas-projects.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = False  # Using specific origins above for security
+CORS_ALLOW_ALL_ORIGINS = False
 
 # AWS S3 Configuration
 
