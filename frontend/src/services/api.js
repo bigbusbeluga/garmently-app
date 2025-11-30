@@ -98,7 +98,9 @@ export const apiService = {
       localStorage.setItem('user', JSON.stringify({ username: credentials.username }));
       return { user: { username: credentials.username }, token: 'mock-token-123' };
     }
-    const response = await api.post('/auth/login/', credentials);
+    console.log('Calling login API:', `${API_BASE_URL}/api/auth/login/`);
+    console.log('With credentials:', { username: credentials.username });
+    const response = await api.post('/api/auth/login/', credentials);
     return response.data;
   },
 
