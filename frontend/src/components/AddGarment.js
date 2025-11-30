@@ -27,6 +27,7 @@ function AddGarment() {
   const [originalImage, setOriginalImage] = useState(null);
 
   useEffect(() => {
+    document.title = 'Add Garment - Garmently';
     fetchCategories();
   }, []);
 

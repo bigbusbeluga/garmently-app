@@ -9,6 +9,7 @@ function Outfits() {
   const [selectedOutfit, setSelectedOutfit] = useState(null);
 
   useEffect(() => {
+    document.title = 'Outfits - Garmently';
     fetchOutfits();
   }, []);
 

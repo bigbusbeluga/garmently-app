@@ -14,6 +14,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    document.title = 'Dashboard - Garmently';
     fetchDashboardData();
   }, []);
 

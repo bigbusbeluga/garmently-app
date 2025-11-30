@@ -17,6 +17,7 @@ function MixMatch() {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
+    document.title = 'Mix & Match - Garmently';
     fetchGarments();
     fetchCategories();
   }, []);

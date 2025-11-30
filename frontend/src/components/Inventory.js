@@ -11,6 +11,7 @@ function Inventory() {
   const [categories, setCategories] = useState(['All', 'Favorites']);
 
   useEffect(() => {
+    document.title = 'Wardrobe - Garmently';
     fetchItems();
     fetchCategories();
   }, []);

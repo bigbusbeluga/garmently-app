@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { apiService } from '../services/api';
@@ -17,6 +17,10 @@ function Signup() {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    document.title = 'Sign Up - Garmently';
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
