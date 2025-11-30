@@ -191,13 +191,15 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React development server
     "http://127.0.0.1:3000",
     "https://garmently-app.vercel.app",  # Vercel production
-    "https://*.vercel.app",  # All Vercel preview deployments
+]
+
+# Allow specific Vercel preview URLs
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-
-# Allow all origins during development (you can restrict this in production)
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False  # Using specific origins above for security
 
 # AWS S3 Configuration
 
