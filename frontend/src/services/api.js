@@ -95,7 +95,7 @@ export const apiService = {
     if (USE_MOCK_DATA) {
       return { user: { username: userData.username, email: userData.email }, token: 'mock-token-123' };
     }
-    const response = await api.post('/auth/register/', userData);
+    const response = await api.post('/api/auth/register/', userData);
     return response.data;
   },
 
