@@ -34,6 +34,7 @@
 
 4. **Note Your Backend URL**
    - Copy the deployment URL (e.g., `https://garmently-backend.vercel.app`)
+     garmently-app-production.up.railway.app
    - You'll need this for the frontend
 
 ### Step 2: Deploy Frontend to Vercel

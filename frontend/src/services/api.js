@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
-const USE_MOCK_DATA = true; // Force demo mode - change to !process.env.REACT_APP_API_URL when backend is ready
+const USE_MOCK_DATA = !process.env.REACT_APP_API_URL; // Use real API when URL is provided
 
 // Mock data for demo
 const mockGarments = [

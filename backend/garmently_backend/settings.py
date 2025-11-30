@@ -12,9 +12,16 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Base backend directory (backend/)
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load backend/.env early so DATABASE_URL and friends are available locally
+env_path = BASE_DIR / '.env'
+if env_path.exists():
+    load_dotenv(env_path)
 
 
 # Quick-start development settings - unsuitable for production
@@ -139,10 +146,17 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Additional locations of static files
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+# Ensure the optional project-level static directory exists so collectstatic does not warn
+STATIC_DIR = BASE_DIR / "static"
+if not STATIC_DIR.exists():
+    try:
+        STATIC_DIR.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        STATICFILES_DIRS = []
+    else:
+        STATICFILES_DIRS = [STATIC_DIR]
+else:
+    STATICFILES_DIRS = [STATIC_DIR]
 
 # Media files configuration
 MEDIA_URL = '/media/'
@@ -176,6 +190,8 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React development server
     "http://127.0.0.1:3000",
+    "https://garmently-app.vercel.app",  # Vercel production
+    "https://*.vercel.app",  # All Vercel preview deployments
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -184,25 +200,22 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
 # AWS S3 Configuration
-import os
-from dotenv import load_dotenv
-
-# Load environment variables from the .env file in the backend directory
-env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env')
-load_dotenv(env_path)
 
 # AWS S3 Settings
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME', 'garmently-media')
 AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'us-east-1')
+S3_ENABLED_FLAG = os.getenv('ENABLE_S3', 'true').lower() == 'true'
 
-# Use S3 storage if credentials are provided
-USE_S3 = AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
-print(f"Using S3 storage: {USE_S3}")
+# Use S3 storage only when explicitly enabled and credentials are present
+USE_S3 = bool(S3_ENABLED_FLAG and AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY)
 if USE_S3:
+    print("Using S3 storage backend")
     print(f"S3 Bucket: {AWS_STORAGE_BUCKET_NAME}")
     print(f"S3 Region: {AWS_S3_REGION_NAME}")
+else:
+    print("Using local file storage (S3 disabled or credentials missing)")
 
 if USE_S3:
     # S3 Storage Configuration
