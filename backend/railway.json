@@ -1,8 +1,7 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
-    "builder": "NIXPACKS",
-    "buildCommand": "pip install -r requirements-production.txt"
+    "builder": "NIXPACKS"
   },
   "deploy": {
     "startCommand": "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn garmently_backend.wsgi:application --bind 0.0.0.0:$PORT",

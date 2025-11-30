@@ -43,14 +43,28 @@ DEBUG=False
 **To generate a SECRET_KEY**, run this in Python:
 ```python
 python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+
+59d^y6o(zyu^*oymmz_t(ji&13@z$jn$*lj^o23f8zl6tp^lxx
 ```
 
 ### 5. Link Database to Backend
 
-1. In your backend service, go to "Settings" → "Service"
-2. Under "Reference Variables", link the PostgreSQL database
-3. This automatically sets `DATABASE_URL`
+**Option A - Automatic (Recommended):**
+1. Railway usually auto-detects and links the PostgreSQL database
+2. Check your backend service → "Variables" tab
+3. Look for `DATABASE_URL` - if it's there, you're all set!
 
+**Option B - Manual Linking:**
+1. Click on your backend service card in the Railway dashboard
+2. Go to "Variables" tab
+3. Click "+ New Variable" → "Add Reference"
+4. Select your PostgreSQL database
+5. Choose `DATABASE_URL` from the dropdown
+6. Railway will automatically connect them
+
+**To verify the connection:**
+- In Variables tab, you should see `DATABASE_URL` with a value starting with `postgresql://`
+    
 ### 6. Deploy
 
 1. Railway will automatically deploy after configuration
