@@ -1,7 +1,14 @@
 import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
-const USE_MOCK_DATA = !process.env.REACT_APP_API_URL; // Use real API when URL is provided
+const USE_MOCK_DATA = false; // Always use real API in production - set to true only for local demo
+
+// Debug: Log the configuration on startup
+console.log('API Configuration:', {
+  API_BASE_URL,
+  USE_MOCK_DATA,
+  env_value: process.env.REACT_APP_API_URL
+});
 
 // Mock data for demo
 const mockGarments = [

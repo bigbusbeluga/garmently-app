@@ -214,11 +214,19 @@ function AddGarment() {
         }
       });
 
-      await apiService.createGarment(submitData);
+      console.log('Submitting garment to API...', {
+        hasImage: !!formData.image,
+        name: formData.name,
+        category: formData.category
+      });
+
+      const result = await apiService.createGarment(submitData);
+      console.log('Garment created successfully:', result);
       navigate('/wardrobe');
     } catch (error) {
       console.error('Error adding garment:', error);
-      setError('Failed to add garment. Please try again.');
+      console.error('Error details:', error.response?.data || error.message);
+      setError(error.response?.data?.message || error.message || 'Failed to add garment. Please try again.');
       setLoading(false);
     }
   };
