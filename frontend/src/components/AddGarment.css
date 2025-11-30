@@ -48,6 +48,17 @@
   font-size: 14px;
   font-weight: 500;
   color: #374151;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #9ca3af;
+  opacity: 0.7;
+}
   margin-bottom: 8px;
 }
 

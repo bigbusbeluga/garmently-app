@@ -30,7 +30,8 @@ function Layout({ children }) {
       {/* Top Navbar */}
       <nav className="top-navbar">
         <div className="navbar-brand">
-          <i className="fas fa-tshirt"></i> Garmently
+          <img src="/images/logo.png" alt="Garmently Logo" style={{ width: '32px', height: '32px', marginRight: '8px' }} />
+          Garmently
         </div>
         <div className="navbar-user">
           <i className="fas fa-user"></i>
