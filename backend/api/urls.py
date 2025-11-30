@@ -25,33 +25,34 @@ api_urlpatterns = [
     path('api/garments/', views.garments, name='garments'),
 ]
 
-# Template-based URLs (Web interface)
-web_urlpatterns = [
-    # Authentication
-    path('signup/', views.signup, name='signup'),
-    
-    # Main pages
-    path('', views.homepage, name='homepage'),
-    path('dashboard/', views.dashboard, name='dashboard'),
-    path('wardrobe/', views.wardrobe, name='wardrobe'),
-    
-    # Garment management
-    path('add/', views.add_garment, name='add_garment'),
-    path('garments/<int:garment_id>/edit/', views.edit_garment, name='edit_garment'),
-    path('garments/<int:garment_id>/delete/', views.delete_garment, name='delete_garment'),
-    path('garments/<int:garment_id>/wear/', views.wear_garment, name='wear_garment'),
-    
-    # Outfits
-    path('outfits/', views.outfits, name='outfits'),
-    path('outfits/create/', views.create_outfit, name='create_outfit'),
-    
-    # Laundry
-    path('laundry/', views.laundry, name='laundry'),
-    path('laundry/<int:laundry_id>/complete/', views.complete_laundry, name='complete_laundry'),
-    
-    # Mix & Match
-    path('mixmatch/', views.mixmatch, name='mixmatch'),
-]
+# Template-based URLs (Web interface) - DISABLED for API-only backend
+# Uncomment if you want to use Django templates
+# web_urlpatterns = [
+#     # Authentication
+#     path('signup/', views.signup, name='signup'),
+#     
+#     # Main pages
+#     path('', views.homepage, name='homepage'),
+#     path('dashboard/', views.dashboard, name='dashboard'),
+#     path('wardrobe/', views.wardrobe, name='wardrobe'),
+#     
+#     # Garment management
+#     path('add/', views.add_garment, name='add_garment'),
+#     path('garments/<int:garment_id>/edit/', views.edit_garment, name='edit_garment'),
+#     path('garments/<int:garment_id>/delete/', views.delete_garment, name='delete_garment'),
+#     path('garments/<int:garment_id>/wear/', views.wear_garment, name='wear_garment'),
+#     
+#     # Outfits
+#     path('outfits/', views.outfits, name='outfits'),
+#     path('outfits/create/', views.create_outfit, name='create_outfit'),
+#     
+#     # Laundry
+#     path('laundry/', views.laundry, name='laundry'),
+#     path('laundry/<int:laundry_id>/complete/', views.complete_laundry, name='complete_laundry'),
+#     
+#     # Mix & Match
+#     path('mixmatch/', views.mixmatch, name='mixmatch'),
+# ]
 
-# Combine all URLs
-urlpatterns = api_urlpatterns + web_urlpatterns
+# API-only mode - no web templates
+urlpatterns = api_urlpatterns
