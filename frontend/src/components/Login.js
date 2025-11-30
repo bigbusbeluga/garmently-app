@@ -36,27 +36,16 @@ function Login() {
       navigate('/');
     } catch (err) {
       console.error('Login error:', err);
-      
-      // In demo mode, if there's any error, just log them in anyway
-      const USE_DEMO = true; // Hardcoded for deployment
-      if (USE_DEMO) {
-        console.log('Demo mode: bypassing error and logging in');
-        const demoUser = { username: formData.username, email: 'demo@example.com' };
-        login(demoUser, 'demo-token-123');
-        navigate('/');
-        return;
-      }
-      
       console.error('Error response:', err.response);
       
       if (err.response?.data) {
         const errorData = err.response.data;
-        const errorMessage = errorData.error || errorData.detail || JSON.stringify(errorData);
+        const errorMessage = errorData.error || errorData.detail || errorData.message || JSON.stringify(errorData);
         setError(errorMessage);
       } else if (err.message) {
-        setError(`Network error: ${err.message}`);
+        setError(`Network error: ${err.message}. Please check if backend is running.`);
       } else {
-        setError('Login failed. Please check your credentials.');
+        setError('Login failed. Please check your credentials and try again.');
       }
     } finally {
       setLoading(false);

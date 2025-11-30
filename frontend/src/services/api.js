@@ -134,7 +134,7 @@ export const apiService = {
       }
       return mockGarments;
     }
-    const response = await api.get('/garments/');
+    const response = await api.get('/garments-api/');
     return response.data;
   },
 
@@ -142,7 +142,7 @@ export const apiService = {
     if (USE_MOCK_DATA) {
       return mockGarments.find(g => g.id === id);
     }
-    const response = await api.get(`/garments/${id}/`);
+    const response = await api.get(`/garments-api/${id}/`);
     return response.data;
   },
 
@@ -181,7 +181,7 @@ export const apiService = {
       localStorage.setItem('demo_garments', JSON.stringify(mockGarments));
       return newGarment;
     }
-    const response = await api.post('/garments/', formData, {
+    const response = await api.post('/garments-api/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -199,7 +199,7 @@ export const apiService = {
         return mockGarments[index];
       }
     }
-    const response = await api.put(`/garments/${id}/`, formData, {
+    const response = await api.put(`/garments-api/${id}/`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -215,7 +215,7 @@ export const apiService = {
       localStorage.setItem('demo_garments', JSON.stringify(mockGarments));
       return { success: true };
     }
-    const response = await api.delete(`/garments/${id}/`);
+    const response = await api.delete(`/garments-api/${id}/`);
     return response.data;
   },
 
