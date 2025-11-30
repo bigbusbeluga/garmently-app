@@ -247,7 +247,7 @@ export const apiService = {
     if (USE_MOCK_DATA) {
       return mockCategories;
     }
-    const response = await api.get('/categories/');
+    const response = await api.get('/api/categories/');
     return response.data;
   },
 
