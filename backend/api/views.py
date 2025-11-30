@@ -14,6 +14,9 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authtoken.models import Token
+import os
+import json
+from openai import OpenAI
 from .models import Category, Garment, Outfit, LaundryItem, WearHistory
 from .serializers import (
     CategorySerializer, GarmentSerializer, OutfitSerializer,
@@ -419,3 +422,122 @@ def garments(request):
             serializer.save(owner=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# AI Outfit Recommendation Endpoint
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def ai_outfit_recommendation(request):
+    """Generate AI-powered outfit recommendations based on occasion/theme"""
+    try:
+        theme = request.data.get('theme', 'casual day')
+        weather = request.data.get('weather', 'moderate')
+        
+        # Get user's wardrobe
+        garments = Garment.objects.filter(owner=request.user, status='clean')
+        
+        if garments.count() == 0:
+            return Response({
+                'error': 'No clean garments available in your wardrobe'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Build wardrobe description for AI
+        wardrobe_items = []
+        for g in garments:
+            wardrobe_items.append({
+                'id': g.id,
+                'name': g.name,
+                'category': g.category.name if g.category else 'Uncategorized',
+                'color': g.color or 'unknown',
+                'size': g.size or 'unknown',
+                'brand': g.brand or 'unknown'
+            })
+        
+        # Use OpenAI API for recommendations (fallback to rule-based if no API key)
+        api_key = os.getenv('OPENAI_API_KEY')
+        
+        if api_key:
+            try:
+                client = OpenAI(api_key=api_key)
+                prompt = f"""You are a fashion stylist assistant. Based on the following wardrobe items, recommend 3 complete outfits for the theme: "{theme}" with weather: "{weather}".
+
+Wardrobe items:
+{json.dumps(wardrobe_items, indent=2)}
+
+For each outfit, provide:
+1. A creative outfit name
+2. List of garment IDs to use (from the wardrobe above)
+3. Brief reasoning why this combination works
+4. Style tip
+
+Return JSON format:
+{{
+  "outfits": [
+    {{
+      "name": "outfit name",
+      "garment_ids": [1, 2, 3],
+      "reasoning": "why it works",
+      "style_tip": "additional tip"
+    }}
+  ]
+}}"""
+                
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a professional fashion stylist who creates practical, stylish outfit recommendations."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature=0.8,
+                    response_format={ "type": "json_object" }
+                )
+                
+                recommendations = json.loads(response.choices[0].message.content)
+                return Response(recommendations)
+                
+            except Exception as e:
+                print(f"OpenAI API error: {e}")
+                # Fall through to rule-based recommendation
+        
+        # Rule-based fallback recommendation
+        tops = list(garments.filter(category__name__icontains='top'))
+        bottoms = list(garments.filter(category__name__icontains='bottom'))
+        shoes = list(garments.filter(category__name__icontains='shoe'))
+        outerwear = list(garments.filter(category__name__icontains='outer'))
+        
+        recommendations = {
+            "outfits": []
+        }
+        
+        # Generate simple combinations
+        for i in range(min(3, len(tops))):
+            outfit = {
+                "name": f"{theme.title()} Look {i+1}",
+                "garment_ids": [],
+                "reasoning": f"A versatile combination perfect for {theme}",
+                "style_tip": "Accessorize to personalize your look!"
+            }
+            
+            if i < len(tops):
+                outfit["garment_ids"].append(tops[i].id)
+            if i < len(bottoms):
+                outfit["garment_ids"].append(bottoms[i].id)
+            if i < len(shoes):
+                outfit["garment_ids"].append(shoes[i].id)
+            
+            if outfit["garment_ids"]:
+                recommendations["outfits"].append(outfit)
+        
+        if not recommendations["outfits"]:
+            recommendations["outfits"].append({
+                "name": f"Simple {theme.title()} Outfit",
+                "garment_ids": [g.id for g in garments[:3]],
+                "reasoning": "A basic combination from your available items",
+                "style_tip": "Mix and match to find your perfect look!"
+            })
+        
+        return Response(recommendations)
+        
+    except Exception as e:
+        return Response({
+            'error': f'Failed to generate recommendations: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

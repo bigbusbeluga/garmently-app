@@ -19,6 +19,9 @@ api_urlpatterns = [
     path('api/auth/logout/', views.logout_view, name='api_logout'),
     path('api/auth/user/', views.current_user, name='current_user'),
     
+    # AI Features
+    path('api/ai/outfit-recommendations/', views.ai_outfit_recommendation, name='ai_outfit_recommendation'),
+    
     # Legacy endpoints
     path('api/hello/', views.hello_world, name='hello_world'),
     path('api/status/', views.api_status, name='api_status'),

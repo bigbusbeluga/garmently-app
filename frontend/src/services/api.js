@@ -329,6 +329,31 @@ export const apiService = {
     const response = await api.get('/status/');
     return response.data;
   },
+
+  // AI Outfit Recommendations
+  getAIOutfitRecommendations: async (theme, weather = 'moderate') => {
+    if (USE_MOCK_DATA) {
+      // Mock AI recommendations
+      return {
+        outfits: [
+          {
+            name: `${theme} Look 1`,
+            garment_ids: [1, 2],
+            reasoning: `This combination is perfect for ${theme} with a comfortable yet stylish vibe`,
+            style_tip: 'Add a statement accessory to personalize this look!'
+          },
+          {
+            name: `${theme} Look 2`,
+            garment_ids: [2, 3],
+            reasoning: `A versatile outfit that works great for ${theme}`,
+            style_tip: 'Layer with a jacket for cooler weather'
+          }
+        ]
+      };
+    }
+    const response = await api.post('/api/ai/outfit-recommendations/', { theme, weather });
+    return response.data;
+  },
 };
 
 export default api;

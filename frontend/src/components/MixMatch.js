@@ -15,6 +15,9 @@ function MixMatch() {
   const [categories, setCategories] = useState(['All']);
   const [draggingItem, setDraggingItem] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [aiRecommendations, setAiRecommendations] = useState(null);
+  const [loadingAI, setLoadingAI] = useState(false);
+  const [showAvatarGuide, setShowAvatarGuide] = useState(true);
 
   useEffect(() => {
     document.title = 'Mix & Match - Garmently';
@@ -174,6 +177,43 @@ function MixMatch() {
     }
   };
 
+  const getAIRecommendations = async (theme) => {
+    setLoadingAI(true);
+    setAiRecommendations(null);
+    try {
+      const response = await apiService.getAIOutfitRecommendations(theme);
+      setAiRecommendations(response);
+      setMessage({ type: 'success', text: `Got ${response.outfits?.length || 0} AI recommendations!` });
+      setTimeout(() => setMessage(null), 3000);
+    } catch (err) {
+      console.error('Error getting AI recommendations:', err);
+      setMessage({ type: 'error', text: 'Failed to get AI recommendations. Try again later.' });
+    } finally {
+      setLoadingAI(false);
+    }
+  };
+
+  const applyAIOutfit = (outfit) => {
+    clearCanvas();
+    const garmentsToAdd = garments.filter(g => outfit.garment_ids.includes(g.id));
+    
+    const positioned = garmentsToAdd.map((garment, index) => ({
+      ...garment,
+      position: { 
+        x: 50 + (index * 160), 
+        y: 100 + ((index % 2) * 100) 
+      },
+      zIndex: index,
+    }));
+    
+    setSelectedGarments(positioned);
+    setOutfitName(outfit.name);
+    setOutfitNotes(`${outfit.reasoning}\n\nStyle Tip: ${outfit.style_tip}`);
+    setAiRecommendations(null);
+    setMessage({ type: 'success', text: 'AI outfit applied! Adjust items as needed.' });
+    setTimeout(() => setMessage(null), 3000);
+  };
+
   const filteredGarments = filterCategory === 'All' 
     ? garments 
     : garments.filter(g => g.category_name === filterCategory);
@@ -191,9 +231,62 @@ function MixMatch() {
   return (
     <div className="mixmatch-page">
       <div className="mixmatch-header">
-        <h1><img src="/images/logo.png" alt="Garmently" style={{ width: '35px', height: '35px', marginRight: '0.8rem', verticalAlign: 'middle' }} /><i className="fas fa-magic"></i> Mix & Match</h1>
-        <p>Drag and drop garments to create your perfect outfit</p>
+        <h1><img src="/images/logo.png" alt="Garmently" style={{ width: '35px', height: '35px', marginRight: '0.8rem', verticalAlign: 'middle' }} /><i className="fas fa-magic"></i> Mix & Match Studio</h1>
+        <p>Drag and drop garments to create your perfect outfit - or let AI help you!</p>
       </div>
+
+      {/* AI Recommendation Section */}
+      <div className="ai-section">
+        <h3><i className="fas fa-robot"></i> AI Outfit Assistant</h3>
+        <p>Get personalized outfit recommendations based on themes:</p>
+        <div className="ai-buttons">
+          <button onClick={() => getAIRecommendations('casual school day')} disabled={loadingAI} className="btn btn-ai">
+            🎒 Casual School
+          </button>
+          <button onClick={() => getAIRecommendations('date night')} disabled={loadingAI} className="btn btn-ai">
+            💕 Date Night
+          </button>
+          <button onClick={() => getAIRecommendations('professional work')} disabled={loadingAI} className="btn btn-ai">
+            💼 Work Professional
+          </button>
+          <button onClick={() => getAIRecommendations('weekend brunch')} disabled={loadingAI} className="btn btn-ai">
+            🥞 Weekend Brunch
+          </button>
+          <button onClick={() => getAIRecommendations('party outfit')} disabled={loadingAI} className="btn btn-ai">
+            🎉 Party Time
+          </button>
+        </div>
+        {loadingAI && (
+          <div className="ai-loading">
+            <i className="fas fa-spinner fa-spin"></i> AI is creating outfit recommendations...
+          </div>
+        )}
+      </div>
+
+      {/* AI Recommendations Display */}
+      {aiRecommendations && aiRecommendations.outfits && (
+        <div className="ai-recommendations">
+          <h3>✨ AI Recommended Outfits</h3>
+          <div className="recommendations-grid">
+            {aiRecommendations.outfits.map((outfit, index) => (
+              <div key={index} className="recommendation-card">
+                <h4>{outfit.name}</h4>
+                <p className="reasoning">{outfit.reasoning}</p>
+                <p className="style-tip"><strong>💡 Style Tip:</strong> {outfit.style_tip}</p>
+                <button 
+                  onClick={() => applyAIOutfit(outfit)}
+                  className="btn btn-primary btn-sm"
+                >
+                  Try This Outfit
+                </button>
+              </div>
+            ))}
+          </div>
+          <button onClick={() => setAiRecommendations(null)} className="btn btn-secondary btn-sm">
+            Close Recommendations
+          </button>
+        </div>
+      )}
 
       {message && (
         <div className={`alert alert-${message.type}`}>
@@ -205,8 +298,15 @@ function MixMatch() {
         {/* Canvas Area - Left Side */}
         <div className="canvas-section">
           <div className="canvas-header">
-            <h2>Your Outfit</h2>
+            <h2>Your Virtual Closet</h2>
             <div className="canvas-actions">
+              <button 
+                onClick={() => setShowAvatarGuide(!showAvatarGuide)}
+                className="btn btn-outline btn-sm"
+                title="Toggle avatar guide"
+              >
+                <i className={`fas fa-${showAvatarGuide ? 'eye-slash' : 'eye'}`}></i> Avatar
+              </button>
               <button 
                 onClick={clearCanvas} 
                 className="btn btn-secondary btn-sm"
@@ -222,6 +322,16 @@ function MixMatch() {
             onDragOver={handleDragOver}
             onDrop={handleDrop}
           >
+            {/* Avatar silhouette guide */}
+            {showAvatarGuide && (
+              <div className="avatar-guide">
+                <div className="avatar-head"></div>
+                <div className="avatar-body"></div>
+                <div className="avatar-arms"></div>
+                <div className="avatar-legs"></div>
+                <p className="avatar-label">Dress me up! ✨</p>
+              </div>
+            )}
             {selectedGarments.length === 0 ? (
               <div className="canvas-placeholder">
                 <i className="fas fa-tshirt fa-3x"></i>
