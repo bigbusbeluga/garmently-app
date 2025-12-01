@@ -23,6 +23,7 @@ api_urlpatterns = [
     path('api/auth/user/', views.current_user, name='current_user'),
     path('api/auth/set-password/', views.set_password, name='set_password'),
     path('api/auth/change-password/', views.change_password, name='change_password'),
+    path('api/auth/delete-account/', views.delete_account, name='delete_account'),
     
     # AI Features
     path('api/ai/outfit-recommendations/', views.ai_outfit_recommendation, name='ai_outfit_recommendation'),

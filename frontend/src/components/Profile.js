@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { apiService } from '../services/api';
 import SetPasswordModal from './SetPasswordModal';
+import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 
 function Profile() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [profileData, setProfileData] = useState({
@@ -21,10 +23,12 @@ function Profile() {
     new_password: '',
     confirm_password: ''
   });
-  const [activeTab, setActiveTab] = useState('profile'); // 'profile' or 'password'
+  const [activeTab, setActiveTab] = useState('profile'); // 'profile', 'password', or 'delete'
   const [previewImage, setPreviewImage] = useState(null);
   const [showSetPassword, setShowSetPassword] = useState(false);
   const [hasPassword, setHasPassword] = useState(true);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     document.title = 'Profile - Garmently';
@@ -135,6 +139,29 @@ function Profile() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    setLoading(true);
+    setMessage(null);
+
+    try {
+      await apiService.deleteAccount(deleteConfirmText);
+      setMessage({ type: 'success', text: 'Account deleted successfully. Redirecting...' });
+      
+      // Logout and redirect after a brief delay
+      setTimeout(() => {
+        logout();
+        navigate('/login');
+      }, 2000);
+    } catch (err) {
+      console.error('Error deleting account:', err);
+      setMessage({ 
+        type: 'error', 
+        text: err.response?.data?.error || 'Failed to delete account. Please try again.' 
+      });
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="profile-page">
       <div className="profile-header">
@@ -160,6 +187,12 @@ function Profile() {
           onClick={() => setActiveTab('password')}
         >
           <i className="fas fa-lock"></i> Change Password
+        </button>
+        <button 
+          className={activeTab === 'delete' ? 'tab active' : 'tab'}
+          onClick={() => setActiveTab('delete')}
+        >
+          <i className="fas fa-trash-alt"></i> Delete Account
         </button>
       </div>
 
@@ -320,6 +353,82 @@ function Profile() {
           </form>
             )}
           </>
+        )}
+
+        {activeTab === 'delete' && (
+          <div className="delete-account-section">
+            <div className="danger-zone">
+              <div className="danger-header">
+                <i className="fas fa-exclamation-triangle"></i>
+                <h3>Danger Zone</h3>
+              </div>
+              
+              <div className="warning-box">
+                <h4>⚠️ Warning: This action cannot be undone!</h4>
+                <p>Deleting your account will permanently remove:</p>
+                <ul>
+                  <li>Your profile information</li>
+                  <li>All your garments and photos</li>
+                  <li>Your outfits and combinations</li>
+                  <li>Your laundry items and history</li>
+                  <li>All other personal data</li>
+                </ul>
+              </div>
+
+              {!showDeleteConfirm ? (
+                <button 
+                  type="button" 
+                  className="btn btn-danger"
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  <i className="fas fa-trash-alt"></i> Delete My Account
+                </button>
+              ) : (
+                <div className="delete-confirm-box">
+                  <h4>Are you absolutely sure?</h4>
+                  <p>To confirm deletion, please type the following text exactly:</p>
+                  <div className="confirmation-text-display">
+                    <code>i want to delete my garmently account</code>
+                  </div>
+                  
+                  <div className="form-group">
+                    <input 
+                      type="text"
+                      value={deleteConfirmText}
+                      onChange={(e) => setDeleteConfirmText(e.target.value)}
+                      placeholder="Type the confirmation text here"
+                      className={deleteConfirmText === "i want to delete my garmently account" ? 'valid' : ''}
+                    />
+                  </div>
+
+                  <div className="delete-actions">
+                    <button 
+                      type="button" 
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        setShowDeleteConfirm(false);
+                        setDeleteConfirmText('');
+                      }}
+                    >
+                      <i className="fas fa-times"></i> Cancel
+                    </button>
+                    <button 
+                      type="button" 
+                      className="btn btn-danger-confirm"
+                      onClick={handleDeleteAccount}
+                      disabled={deleteConfirmText !== "i want to delete my garmently account" || loading}
+                    >
+                      {loading ? (
+                        <><i className="fas fa-spinner fa-spin"></i> Deleting...</>
+                      ) : (
+                        <><i className="fas fa-trash-alt"></i> Permanently Delete Account</>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </div>
 

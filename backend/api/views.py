@@ -744,6 +744,28 @@ def change_password(request):
     
     return Response({'message': 'Password changed successfully'})
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def delete_account(request):
+    """Delete user account with confirmation"""
+    user = request.user
+    confirmation_text = request.data.get('confirmation')
+    
+    # Require exact confirmation text
+    if confirmation_text != "i want to delete my garmently account":
+        return Response(
+            {'error': 'Confirmation text does not match. Please type exactly: "i want to delete my garmently account"'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Delete user account (will cascade delete related data)
+    username = user.username
+    user.delete()
+    
+    return Response({
+        'message': f'Account {username} has been permanently deleted'
+    }, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 def hello_world(request):
     """Simple API endpoint to test connection between React and Django"""

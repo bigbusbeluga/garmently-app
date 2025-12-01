@@ -196,6 +196,15 @@ export const apiService = {
     return response.data;
   },
 
+  deleteAccount: async (confirmation) => {
+    if (USE_MOCK_DATA) {
+      localStorage.clear();
+      return { message: 'Account deleted successfully' };
+    }
+    const response = await api.post('/api/auth/delete-account/', { confirmation });
+    return response.data;
+  },
+
   // Garments
   getGarments: async () => {
     if (USE_MOCK_DATA) {

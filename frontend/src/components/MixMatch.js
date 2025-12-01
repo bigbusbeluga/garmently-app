@@ -18,6 +18,8 @@ function MixMatch() {
   const [aiRecommendations, setAiRecommendations] = useState(null);
   const [loadingAI, setLoadingAI] = useState(false);
   const [showAvatarGuide, setShowAvatarGuide] = useState(true);
+  const [touchedGarment, setTouchedGarment] = useState(null);
+  const [touchStartPos, setTouchStartPos] = useState(null);
 
   useEffect(() => {
     document.title = 'Mix & Match - Garmently';
@@ -130,6 +132,99 @@ function MixMatch() {
     setDraggingItem(null);
   };
 
+  // Touch event handlers for mobile support
+  const handleTouchStart = (e, garment) => {
+    const touch = e.touches[0];
+    setTouchedGarment(garment);
+    setTouchStartPos({ x: touch.clientX, y: touch.clientY });
+  };
+
+  const handleTouchMove = (e) => {
+    if (!touchedGarment) return;
+    e.preventDefault(); // Prevent scrolling while dragging
+  };
+
+  const handleTouchEnd = (e, isCanvas = false) => {
+    if (!touchedGarment) return;
+    
+    const touch = e.changedTouches[0];
+    const canvas = document.querySelector('.outfit-canvas');
+    
+    if (canvas) {
+      const canvasRect = canvas.getBoundingClientRect();
+      const touchX = touch.clientX;
+      const touchY = touch.clientY;
+      
+      // Check if touch ended within canvas bounds
+      if (touchX >= canvasRect.left && touchX <= canvasRect.right &&
+          touchY >= canvasRect.top && touchY <= canvasRect.bottom) {
+        
+        // Check if garment is already in the outfit
+        if (!selectedGarments.find(g => g.id === touchedGarment.id)) {
+          const itemWidth = 150;
+          const itemHeight = 150;
+          
+          let x = touchX - canvasRect.left - 75; // Center the item
+          let y = touchY - canvasRect.top - 75;
+          
+          // Constrain within canvas bounds
+          x = Math.max(0, Math.min(x, canvasRect.width - itemWidth));
+          y = Math.max(0, Math.min(y, canvasRect.height - itemHeight));
+          
+          const newGarment = {
+            ...touchedGarment,
+            position: { x, y },
+            zIndex: selectedGarments.length,
+          };
+          setSelectedGarments([...selectedGarments, newGarment]);
+        }
+      }
+    }
+    
+    setTouchedGarment(null);
+    setTouchStartPos(null);
+  };
+
+  const handleCanvasItemTouchStart = (e, garment) => {
+    const touch = e.touches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+    setDraggingItem(garment.id);
+    setDragOffset({
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top,
+    });
+  };
+
+  const handleCanvasItemTouchMove = (e) => {
+    if (!draggingItem) return;
+    e.preventDefault();
+    
+    const touch = e.touches[0];
+    const canvas = document.querySelector('.outfit-canvas');
+    if (!canvas) return;
+    
+    const canvasRect = canvas.getBoundingClientRect();
+    const itemWidth = 150;
+    const itemHeight = 150;
+    
+    let newX = touch.clientX - canvasRect.left - dragOffset.x;
+    let newY = touch.clientY - canvasRect.top - dragOffset.y;
+    
+    // Constrain within canvas bounds
+    newX = Math.max(0, Math.min(newX, canvasRect.width - itemWidth));
+    newY = Math.max(0, Math.min(newY, canvasRect.height - itemHeight));
+
+    setSelectedGarments(prev => prev.map(g => 
+      g.id === draggingItem 
+        ? { ...g, position: { x: newX, y: newY } }
+        : g
+    ));
+  };
+
+  const handleCanvasItemTouchEnd = () => {
+    setDraggingItem(null);
+  };
+
   const bringToFront = (garmentId) => {
     const maxZIndex = Math.max(...selectedGarments.map(g => g.zIndex || 0));
     setSelectedGarments(prev => prev.map(g =>
@@ -139,6 +234,26 @@ function MixMatch() {
 
   const removeGarment = (garmentId) => {
     setSelectedGarments(selectedGarments.filter(g => g.id !== garmentId));
+  };
+
+  const addGarmentToCanvas = (garment) => {
+    // Check if garment is already in the outfit
+    if (selectedGarments.find(g => g.id === garment.id)) {
+      setMessage({ type: 'info', text: 'This garment is already on the canvas' });
+      setTimeout(() => setMessage(null), 2000);
+      return;
+    }
+
+    // Add garment to center of canvas with slight random offset to avoid overlap
+    const randomOffset = () => Math.floor(Math.random() * 100) - 50;
+    const newGarment = {
+      ...garment,
+      position: { x: 150 + randomOffset(), y: 150 + randomOffset() },
+      zIndex: selectedGarments.length,
+    };
+    setSelectedGarments([...selectedGarments, newGarment]);
+    setMessage({ type: 'success', text: `${garment.name} added to canvas` });
+    setTimeout(() => setMessage(null), 2000);
   };
 
   const clearCanvas = () => {
@@ -391,6 +506,9 @@ function MixMatch() {
                     onDragStart={(e) => handleCanvasItemDragStart(e, garment)}
                     onDrag={handleCanvasItemDrag}
                     onDragEnd={handleCanvasItemDragEnd}
+                    onTouchStart={(e) => handleCanvasItemTouchStart(e, garment)}
+                    onTouchMove={handleCanvasItemTouchMove}
+                    onTouchEnd={handleCanvasItemTouchEnd}
                     onClick={() => bringToFront(garment.id)}
                   >
                     <button 
@@ -520,7 +638,23 @@ function MixMatch() {
                   }`}
                   draggable
                   onDragStart={(e) => handleDragStart(e, garment)}
+                  onTouchStart={(e) => handleTouchStart(e, garment)}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
                 >
+                  <button 
+                    className="garment-menu-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addGarmentToCanvas(garment);
+                    }}
+                    onTouchStart={(e) => e.stopPropagation()}
+                    onTouchEnd={(e) => e.stopPropagation()}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    title="Add to canvas"
+                  >
+                    <i className="fas fa-ellipsis-v"></i>
+                  </button>
                   {garment.image_url ? (
                     <img 
                       src={garment.image_url} 
