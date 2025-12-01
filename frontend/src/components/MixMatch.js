@@ -163,11 +163,12 @@ function MixMatch() {
     try {
       const outfitData = {
         name: outfitName,
-        garments: selectedGarments.map(g => g.id),
+        garment_ids: selectedGarments.map(g => g.id),  // Changed from 'garments' to 'garment_ids'
         occasion: outfitOccasion,
         notes: outfitNotes,
       };
 
+      console.log('Saving outfit with data:', outfitData);
       await apiService.createOutfit(outfitData);
       setMessage({ type: 'success', text: 'Outfit saved successfully!' });
       
