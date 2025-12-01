@@ -1,7 +1,7 @@
 """
 Production settings for Garmently app.
 This file contains production-specific configurations.
-Updated: Trigger fresh deployment with new PostgreSQL database.
+Updated: December 1, 2025 - Force redeploy with CORS fixes
 """
 
 from .settings import *
