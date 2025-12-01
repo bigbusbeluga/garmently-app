@@ -9,6 +9,7 @@ import Inventory from './components/Inventory';
 import AddGarment from './components/AddGarment';
 import MixMatch from './components/MixMatch';
 import Outfits from './components/Outfits';
+import Calendar from './components/Calendar';
 import './App.css';
 
 // Layout Component with Sidebar
@@ -62,6 +63,12 @@ function Layout({ children }) {
               <Link to="/outfits" className={isActive('/outfits')}>
                 <i className="fas fa-users"></i>
                 <span>Outfits</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/calendar" className={isActive('/calendar')}>
+                <i className="fas fa-calendar-alt"></i>
+                <span>Calendar</span>
               </Link>
             </li>
             <li>
@@ -134,6 +141,13 @@ function AppRoutes() {
         <ProtectedRoute>
           <Layout>
             <Outfits />
+          </Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/calendar" element={
+        <ProtectedRoute>
+          <Layout>
+            <Calendar />
           </Layout>
         </ProtectedRoute>
       } />

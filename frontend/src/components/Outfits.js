@@ -83,8 +83,6 @@ function Outfits() {
 
   const downloadOutfitImage = async (outfit) => {
     try {
-      // Use html2canvas to capture the canvas
-      const html2canvas = (await import('html2canvas')).default;
       const canvas = document.getElementById(`outfit-canvas-${outfit.id}`);
       
       if (!canvas) {
@@ -92,17 +90,75 @@ function Outfits() {
         return;
       }
 
-      // Capture the canvas
-      const capturedCanvas = await html2canvas(canvas, {
-        backgroundColor: '#f8f9fa',
-        scale: 2, // Higher quality
-        logging: false,
-        useCORS: true, // Allow cross-origin images
-        allowTaint: true
+      // Create a temporary canvas to draw the outfit
+      const tempCanvas = document.createElement('canvas');
+      const images = canvas.querySelectorAll('.outfit-garment-item img');
+      
+      if (images.length === 0) {
+        alert('No images to download');
+        return;
+      }
+
+      // Calculate canvas size based on positioned elements
+      let maxX = 0, maxY = 0;
+      const items = canvas.querySelectorAll('.canvas-item-positioned');
+      items.forEach(item => {
+        const rect = item.getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
+        const x = rect.left - canvasRect.left + rect.width;
+        const y = rect.top - canvasRect.top + rect.height;
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
       });
 
-      // Convert to blob and download
-      capturedCanvas.toBlob((blob) => {
+      tempCanvas.width = Math.max(maxX + 40, 400);
+      tempCanvas.height = Math.max(maxY + 40, 400);
+      const ctx = tempCanvas.getContext('2d');
+      
+      // Fill background
+      ctx.fillStyle = '#f8f9fa';
+      ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+      // Draw each garment image at its position
+      const drawPromises = Array.from(items).map((item, index) => {
+        return new Promise((resolve) => {
+          const img = item.querySelector('img');
+          if (!img || img.style.display === 'none') {
+            resolve();
+            return;
+          }
+
+          const tempImg = new Image();
+          tempImg.crossOrigin = 'anonymous';
+          
+          tempImg.onload = () => {
+            const rect = item.getBoundingClientRect();
+            const canvasRect = canvas.getBoundingClientRect();
+            const x = rect.left - canvasRect.left;
+            const y = rect.top - canvasRect.top;
+            
+            // Draw white background for garment
+            ctx.fillStyle = 'white';
+            ctx.fillRect(x, y, 150, 150);
+            
+            // Draw image
+            ctx.drawImage(tempImg, x + 5, y + 5, 140, 140);
+            resolve();
+          };
+          
+          tempImg.onerror = () => {
+            console.error('Failed to load:', img.src);
+            resolve();
+          };
+          
+          tempImg.src = img.src;
+        });
+      });
+
+      await Promise.all(drawPromises);
+
+      // Download
+      tempCanvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
