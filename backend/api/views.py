@@ -7,6 +7,8 @@ from django.http import JsonResponse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.core.mail import send_mail
+from django.conf import settings
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -17,7 +19,7 @@ from rest_framework.authtoken.models import Token
 import os
 import json
 from openai import OpenAI
-from .models import Category, Garment, Outfit, LaundryItem, WearHistory
+from .models import Category, Garment, Outfit, LaundryItem, WearHistory, EmailVerification
 from .serializers import (
     CategorySerializer, GarmentSerializer, OutfitSerializer,
     UserSerializer, RegisterSerializer, LoginSerializer
@@ -253,6 +255,97 @@ def signup(request):
     return render(request, 'registration/signup.html', {'form': form})
 
 # ==================== API VIEWS (REST Framework) ====================
+
+# Email Verification Endpoints
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def send_verification_code(request):
+    """Send verification code to email"""
+    email = request.data.get('email')
+    
+    if not email:
+        return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Check if email already exists
+    if User.objects.filter(email=email).exists():
+        return Response({'error': 'Email already registered'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Generate verification code
+    code = EmailVerification.generate_code()
+    
+    # Delete old verification codes for this email
+    EmailVerification.objects.filter(email=email).delete()
+    
+    # Create new verification code
+    verification = EmailVerification.objects.create(email=email, code=code)
+    
+    # Send email
+    try:
+        subject = 'Garmently - Email Verification Code'
+        message = f'''
+Hello!
+
+Your verification code for Garmently is: {code}
+
+This code will expire in 10 minutes.
+
+If you didn't request this code, please ignore this email.
+
+Best regards,
+Garmently Team
+        '''
+        
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+        
+        return Response({
+            'message': 'Verification code sent successfully',
+            'email': email
+        }, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        print(f"Error sending email: {str(e)}")
+        return Response({
+            'error': 'Failed to send verification email. Please try again.',
+            'detail': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def verify_code(request):
+    """Verify the email verification code"""
+    email = request.data.get('email')
+    code = request.data.get('code')
+    
+    if not email or not code:
+        return Response({'error': 'Email and code are required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        verification = EmailVerification.objects.filter(
+            email=email,
+            code=code,
+            is_verified=False
+        ).latest('created_at')
+        
+        if verification.is_expired():
+            return Response({'error': 'Verification code has expired'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Mark as verified
+        verification.is_verified = True
+        verification.save()
+        
+        return Response({
+            'message': 'Email verified successfully',
+            'verified': True
+        }, status=status.HTTP_200_OK)
+    
+    except EmailVerification.DoesNotExist:
+        return Response({'error': 'Invalid verification code'}, status=status.HTTP_400_BAD_REQUEST)
 
 # Authentication Endpoints
 @api_view(['POST'])

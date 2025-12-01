@@ -90,6 +90,23 @@ api.interceptors.response.use(
 );
 
 export const apiService = {
+  // Email Verification
+  sendVerificationCode: async (email) => {
+    if (USE_MOCK_DATA) {
+      return { message: 'Verification code sent' };
+    }
+    const response = await api.post('/api/auth/send-verification/', { email });
+    return response.data;
+  },
+
+  verifyCode: async (email, code) => {
+    if (USE_MOCK_DATA) {
+      return { message: 'Code verified successfully' };
+    }
+    const response = await api.post('/api/auth/verify-code/', { email, code });
+    return response.data;
+  },
+
   // Authentication
   register: async (userData) => {
     if (USE_MOCK_DATA) {

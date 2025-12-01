@@ -23,6 +23,7 @@ function Layout({ children }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [notificationCount, setNotificationCount] = useState(0);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   const isActive = (path) => {
     return location.pathname === path ? 'nav-link active' : 'nav-link';
@@ -72,6 +73,9 @@ function Layout({ children }) {
     <div className="app-container">
       {/* Top Navbar */}
       <nav className="top-navbar">
+        <button className="hamburger-menu" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          <i className={sidebarOpen ? "fas fa-times" : "fas fa-bars"}></i>
+        </button>
         <div className="navbar-brand">
           <img src="/images/logo.png" alt="Garmently Logo" style={{ width: '32px', height: '32px', marginRight: '8px' }} />
           Garmently
@@ -100,54 +104,57 @@ function Layout({ children }) {
       <Notifications isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
 
       <div className="app-layout">
+        {/* Mobile Overlay */}
+        {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>}
+        
         {/* Sidebar */}
-        <aside className="app-sidebar">
+        <aside className={`app-sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
           <ul className="sidebar-menu">
             <li>
-              <Link to="/" className={isActive('/')}>
+              <Link to="/" className={isActive('/')} onClick={() => setSidebarOpen(false)}>
                 <i className="fas fa-tachometer-alt"></i>
                 <span>Dashboard</span>
               </Link>
             </li>
             <li>
-              <Link to="/wardrobe" className={isActive('/wardrobe')}>
+              <Link to="/wardrobe" className={isActive('/wardrobe')} onClick={() => setSidebarOpen(false)}>
                 <i className="fas fa-tshirt"></i>
                 <span>Wardrobe</span>
               </Link>
             </li>
             <li>
-              <Link to="/outfits" className={isActive('/outfits')}>
+              <Link to="/outfits" className={isActive('/outfits')} onClick={() => setSidebarOpen(false)}>
                 <i className="fas fa-users"></i>
                 <span>Outfits</span>
               </Link>
             </li>
             <li>
-              <Link to="/calendar" className={isActive('/calendar')}>
+              <Link to="/calendar" className={isActive('/calendar')} onClick={() => setSidebarOpen(false)}>
                 <i className="fas fa-calendar-alt"></i>
                 <span>Calendar</span>
               </Link>
             </li>
             <li>
-              <Link to="/laundry" className={isActive('/laundry')}>
+              <Link to="/laundry" className={isActive('/laundry')} onClick={() => setSidebarOpen(false)}>
                 <i className="fas fa-soap"></i>
                 <span>Laundry</span>
               </Link>
             </li>
             <li>
-              <Link to="/mixmatch" className={isActive('/mixmatch')}>
+              <Link to="/mixmatch" className={isActive('/mixmatch')} onClick={() => setSidebarOpen(false)}>
                 <i className="fas fa-magic"></i>
                 <span>Mix & Match</span>
               </Link>
             </li>
             <li className="menu-divider"></li>
             <li>
-              <Link to="/add-garment" className={isActive('/add-garment')}>
+              <Link to="/add-garment" className={isActive('/add-garment')} onClick={() => setSidebarOpen(false)}>
                 <i className="fas fa-plus"></i>
                 <span>Add Garment</span>
               </Link>
             </li>
             <li>
-              <Link to="/profile" className={isActive('/profile')}>
+              <Link to="/profile" className={isActive('/profile')} onClick={() => setSidebarOpen(false)}>
                 <i className="fas fa-user-circle"></i>
                 <span>Profile</span>
               </Link>

@@ -1,5 +1,32 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+import random
+import string
+
+class EmailVerification(models.Model):
+    """Store email verification codes"""
+    email = models.EmailField()
+    code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_verified = models.BooleanField(default=False)
+    
+    @staticmethod
+    def generate_code():
+        """Generate a 6-digit verification code"""
+        return ''.join(random.choices(string.digits, k=6))
+    
+    def is_expired(self):
+        """Check if verification code has expired (10 minutes)"""
+        from django.conf import settings
+        expiry_minutes = getattr(settings, 'VERIFICATION_CODE_EXPIRY', 10)
+        return timezone.now() > self.created_at + timezone.timedelta(minutes=expiry_minutes)
+    
+    def __str__(self):
+        return f"{self.email} - {self.code}"
+    
+    class Meta:
+        ordering = ['-created_at']
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
