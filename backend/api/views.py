@@ -526,9 +526,21 @@ def login_view(request):
     print(f"Login attempt with data: {request.data}")  # Debug log
     serializer = LoginSerializer(data=request.data)
     if serializer.is_valid():
-        username = serializer.validated_data['username']
+        username_or_email = serializer.validated_data['username']
         password = serializer.validated_data['password']
-        user = authenticate(username=username, password=password)
+        
+        # Try to find user by email first, then by username
+        user = None
+        if '@' in username_or_email:
+            # It's an email
+            try:
+                user_obj = User.objects.get(email=username_or_email)
+                user = authenticate(username=user_obj.username, password=password)
+            except User.DoesNotExist:
+                pass
+        else:
+            # It's a username
+            user = authenticate(username=username_or_email, password=password)
         
         if user:
             token, created = Token.objects.get_or_create(user=user)
@@ -538,9 +550,9 @@ def login_view(request):
                 'user': UserSerializer(user).data,
                 'message': 'Login successful'
             })
-        print(f"Authentication failed for username: {username}")  # Debug log
+        print(f"Authentication failed for: {username_or_email}")  # Debug log
         return Response(
-            {'error': 'Invalid username or password'},
+            {'error': 'Invalid credentials'},
             status=status.HTTP_401_UNAUTHORIZED
         )
     print(f"Login validation errors: {serializer.errors}")  # Debug log

@@ -9,7 +9,7 @@ function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [formData, setFormData] = useState({
-    username: '',
+    username: '',  // Can be email or username
     password: ''
   });
   const [error, setError] = useState('');
@@ -96,7 +96,7 @@ function Login() {
           <div className="form-group">
             <label htmlFor="username">
               <i className="fas fa-user"></i>
-              Username
+              Email or Username
             </label>
             <input
               type="text"
@@ -105,7 +105,7 @@ function Login() {
               value={formData.username}
               onChange={handleChange}
               required
-              placeholder="Enter your username"
+              placeholder="Enter your email or username"
               autoFocus
             />
           </div>

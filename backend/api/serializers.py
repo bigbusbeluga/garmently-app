@@ -47,7 +47,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.Serializer):
     """Serializer for user login"""
-    username = serializers.CharField()
+    username = serializers.CharField()  # Can be username or email
     password = serializers.CharField(write_only=True)
 
 class CategorySerializer(serializers.ModelSerializer):
