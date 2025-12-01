@@ -632,8 +632,6 @@ def logout_view(request):
     except:
         return Response({'error': 'Something went wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
 @api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
 def current_user(request):
@@ -648,6 +646,37 @@ def current_user(request):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def set_password(request):
+    """Set password for OAuth users who don't have one"""
+    password = request.data.get('password')
+    password2 = request.data.get('password2')
+    
+    if not password or not password2:
+        return Response({
+            'error': 'Both password fields are required'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    if password != password2:
+        return Response({
+            'error': 'Passwords do not match'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    if len(password) < 8:
+        return Response({
+            'error': 'Password must be at least 8 characters long'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Set the password for the user
+    request.user.set_password(password)
+    request.user.save()
+    
+    return Response({
+        'message': 'Password set successfully',
+        'user': UserSerializer(request.user).data
+    }, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
