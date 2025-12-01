@@ -13,6 +13,7 @@ import Calendar from './components/Calendar';
 import Laundry from './components/Laundry';
 import Profile from './components/Profile';
 import Notifications from './components/Notifications';
+import InstallPrompt from './components/InstallPrompt';
 import './App.css';
 
 // Layout Component with Sidebar
@@ -247,6 +248,7 @@ function App() {
     <Router>
       <AuthProvider>
         <AppRoutes />
+        <InstallPrompt />
       </AuthProvider>
     </Router>
   );

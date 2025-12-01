@@ -1,20 +1,57 @@
 {
   "short_name": "Garmently",
   "name": "Garmently - Digital Wardrobe Manager",
+  "description": "Your smart digital wardrobe manager. Organize clothes, create outfits, track laundry, and never wonder what to wear again.",
   "icons": [
     {
       "src": "images/logo.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     },
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "theme_color": "#6366f1",
-  "background_color": "#ffffff"
+  "background_color": "#f3f4f6",
+  "categories": ["lifestyle", "fashion", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Home",
+      "description": "View your wardrobe dashboard",
+      "url": "/",
+      "icons": [{ "src": "images/logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Add Garment",
+      "short_name": "Add",
+      "description": "Add a new garment to your wardrobe",
+      "url": "/add-garment",
+      "icons": [{ "src": "images/logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Mix & Match",
+      "short_name": "Mix",
+      "description": "Create new outfits",
+      "url": "/mixmatch",
+      "icons": [{ "src": "images/logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Calendar",
+      "short_name": "Plan",
+      "description": "Schedule your outfits",
+      "url": "/calendar",
+      "icons": [{ "src": "images/logo.png", "sizes": "192x192" }]
+    }
+  ]
 }
+

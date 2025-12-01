@@ -152,9 +152,13 @@ body {
   border-right: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
   min-height: calc(100vh - 56px);
-  padding: 16px 0;
+  padding: 16px 0 0 0;
   display: flex;
   flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
 }
 
 .sidebar-menu {
@@ -162,12 +166,18 @@ body {
   padding: 0;
   margin: 0;
   flex: 1;
+  overflow-y: auto;
 }
 
 .sidebar-footer {
   padding: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   margin-top: auto;
+  background: rgba(255, 255, 255, 0.05);
+  position: sticky;
+  bottom: 0;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .current-time {
@@ -296,8 +306,36 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
+  .top-navbar {
+    padding: 12px 16px;
+  }
+
+  .navbar-brand {
+    font-size: 16px;
+  }
+
+  .navbar-brand img {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .navbar-user {
+    gap: 8px;
+  }
+
+  .navbar-user span {
+    display: none;
+  }
+
+  .notification-btn,
+  .profile-link,
+  .logout-btn {
+    padding: 8px;
+  }
+
   .app-sidebar {
     width: 60px;
+    padding: 8px 0 0 0;
   }
   
   .sidebar-menu .nav-link span {
@@ -306,5 +344,45 @@ body {
   
   .sidebar-menu .nav-link {
     justify-content: center;
+    padding: 12px 8px;
+  }
+
+  .sidebar-footer {
+    padding: 0.5rem;
+  }
+
+  .current-time {
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .current-time i {
+    font-size: 1.25rem;
+  }
+
+  .time-display .time {
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  .time-display .date {
+    font-size: 0.7rem;
+    text-align: center;
+  }
+
+  .app-main {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-main {
+    padding: 12px;
+  }
+
+  .top-navbar {
+    padding: 10px 12px;
   }
 }
