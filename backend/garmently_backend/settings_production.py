@@ -120,7 +120,8 @@ LOGGING = {
 SECRET_KEY = os.getenv('SECRET_KEY', 'your-production-secret-key-here')
 
 # Production email settings - REQUIRED for email verification
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# Use custom backend to force IPv4 (fixes "Network is unreachable" on Railway)
+EMAIL_BACKEND = 'garmently_backend.email_backend.EmailBackendIPv4'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
