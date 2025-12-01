@@ -208,90 +208,13 @@ def mixmatch(request):
     )
     categories = Category.objects.filter(
         garment__owner=request.user
-    try:
-        from django.conf import settings
-        configured_client_id = (
-            getattr(settings, 'SOCIALACCOUNT_PROVIDERS', {})
-            .get('google', {})
-            .get('APP', {})
-            .get('client_id')
-        )
-        allowed_audiences = set()
-        if configured_client_id:
-            allowed_audiences.add(configured_client_id)
-        extra_audiences = os.getenv('GOOGLE_ALLOWED_AUDIENCES')
-        if extra_audiences:
-            allowed_audiences.update([
-                aud.strip() for aud in extra_audiences.split(',') if aud.strip()
-            ])
-
-        # When the frontend provides an access token we can hit the standard userinfo endpoint.
-        if access_token:
-            google_response = requests.get(
-                'https://www.googleapis.com/oauth2/v3/userinfo',
-                headers={'Authorization': f'Bearer {access_token}'}
-            )
-
-            if google_response.status_code != 200:
-                return Response({'error': 'Invalid Google credential'}, status=status.HTTP_400_BAD_REQUEST)
-
-            user_info = google_response.json()
-
-            audience = user_info.get('aud') or user_info.get('audience')
-            if allowed_audiences and audience and audience not in allowed_audiences:
-                return Response(
-                    {
-                        'error': 'Google credential does not match any allowed client',
-                        'detail': f'aud={audience}'
-                    },
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-        else:
-            try:
-                from google.oauth2 import id_token as google_id_token
-                from google.auth.transport import requests as google_auth_requests
-            except ImportError:
-                return Response(
-                    {'error': 'Google authentication library is not available on the server'},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
-
-            try:
-                id_info = google_id_token.verify_oauth2_token(
-                    id_token,
-                    google_auth_requests.Request(),
-                    None  # We validate the audience manually below to allow multiple IDs.
-                )
-            except ValueError as exc:
-                return Response(
-                    {
-                        'error': 'Invalid Google credential',
-                        'detail': str(exc)
-                    },
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-            if not id_info.get('email_verified', True):
-                return Response({'error': 'Google account email is not verified'}, status=status.HTTP_400_BAD_REQUEST)
-
-            audience = id_info.get('aud')
-            if allowed_audiences and audience not in allowed_audiences:
-                return Response(
-                    {
-                        'error': 'Google credential does not match any allowed client',
-                        'detail': f'aud={audience}'
-                    },
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-            user_info = {
-                'email': id_info.get('email'),
-                'sub': id_info.get('sub'),
-                'given_name': id_info.get('given_name', ''),
-                'family_name': id_info.get('family_name', ''),
-                'picture': id_info.get('picture', ''),
-            }
-    return redirect('wardrobe')
+    ).distinct()
+    
+    context = {
+        'garments': available_garments,
+        'categories': categories,
+    }
+    return render(request, 'api/mixmatch.html', context)
 
 def signup(request):
     """User registration"""
@@ -415,25 +338,6 @@ def google_auth(request):
         return Response({'error': 'Google credential is required'}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
-        # When the frontend provides an access token we can hit the standard userinfo endpoint.
-        if access_token:
-            google_response = requests.get(
-                'https://www.googleapis.com/oauth2/v3/userinfo',
-                headers={'Authorization': f'Bearer {access_token}'}
-            )
-        else:
-            # @react-oauth/google returns an ID token (aka credential); verify it explicitly.
-            google_response = requests.get(
-                'https://oauth2.googleapis.com/tokeninfo',
-                params={'id_token': id_token}
-            )
-        
-        if google_response.status_code != 200:
-            return Response({'error': 'Invalid Google credential'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        user_info = google_response.json()
-
-        # Ensure token was issued for our client in production to avoid token reuse.
         from django.conf import settings
         configured_client_id = (
             getattr(settings, 'SOCIALACCOUNT_PROVIDERS', {})
@@ -441,9 +345,82 @@ def google_auth(request):
             .get('APP', {})
             .get('client_id')
         )
-        audience = user_info.get('aud') or user_info.get('audience')
-        if configured_client_id and audience and audience != configured_client_id:
-            return Response({'error': 'Google credential does not match configured client'}, status=status.HTTP_400_BAD_REQUEST)
+        allowed_audiences = set()
+        if configured_client_id:
+            allowed_audiences.add(configured_client_id)
+        extra_audiences = os.getenv('GOOGLE_ALLOWED_AUDIENCES')
+        if extra_audiences:
+            allowed_audiences.update([
+                aud.strip() for aud in extra_audiences.split(',') if aud.strip()
+            ])
+
+        # When the frontend provides an access token we can hit the standard userinfo endpoint.
+        if access_token:
+            google_response = requests.get(
+                'https://www.googleapis.com/oauth2/v3/userinfo',
+                headers={'Authorization': f'Bearer {access_token}'}
+            )
+
+            if google_response.status_code != 200:
+                return Response({'error': 'Invalid Google credential'}, status=status.HTTP_400_BAD_REQUEST)
+
+            user_info = google_response.json()
+
+            audience = user_info.get('aud') or user_info.get('audience')
+            if allowed_audiences and audience and audience not in allowed_audiences:
+                return Response(
+                    {
+                        'error': 'Google credential does not match any allowed client',
+                        'detail': f'aud={audience}'
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        else:
+            try:
+                from google.oauth2 import id_token as google_id_token
+                from google.auth.transport import requests as google_auth_requests
+            except ImportError:
+                return Response(
+                    {'error': 'Google authentication library is not available on the server'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+
+            try:
+                id_info = google_id_token.verify_oauth2_token(
+                    id_token,
+                    google_auth_requests.Request(),
+                    None  # We validate the audience manually below to allow multiple IDs.
+                )
+            except ValueError as exc:
+                return Response(
+                    {
+                        'error': 'Invalid Google credential',
+                        'detail': str(exc)
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            if not id_info.get('email_verified', True):
+                return Response({'error': 'Google account email is not verified'}, status=status.HTTP_400_BAD_REQUEST)
+
+            audience = id_info.get('aud')
+            if allowed_audiences and audience not in allowed_audiences:
+                return Response(
+                    {
+                        'error': 'Google credential does not match any allowed client',
+                        'detail': f'aud={audience}'
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            user_info = {
+                'email': id_info.get('email'),
+                'sub': id_info.get('sub'),
+                'given_name': id_info.get('given_name', ''),
+                'family_name': id_info.get('family_name', ''),
+                'picture': id_info.get('picture', ''),
+            }
+
         email = user_info.get('email')
         google_id = user_info.get('sub')
         first_name = user_info.get('given_name', '')
