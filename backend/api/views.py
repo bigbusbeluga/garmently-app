@@ -286,6 +286,9 @@ Garmently Team
         sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
         response = sg.send(sg_message)
         
+        print(f"SendGrid response status: {response.status_code}")
+        print(f"SendGrid response body: {response.body}")
+        
         return Response({
             'message': 'Verification code sent successfully',
             'email': email
@@ -293,6 +296,10 @@ Garmently Team
     
     except Exception as e:
         print(f"Error sending email: {str(e)}")
+        print(f"Error type: {type(e)}")
+        if hasattr(e, 'body'):
+            print(f"SendGrid error body: {e.body}")
+        # Still save the code so user can try again or we can implement retry logic
         # Still save the code so user can try again or we can implement retry logic
         return Response({
             'error': 'Email service temporarily unavailable. Please try again in a moment.',
