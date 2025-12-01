@@ -55,7 +55,15 @@ function Signup() {
       setVerificationSent(true);
       setStep(2);
     } catch (err) {
-      setErrors({ email: err.response?.data?.error || 'Failed to send verification code' });
+      const errorData = err.response?.data;
+      if (errorData?.suggestion === 'google_signin') {
+        setErrors({ 
+          email: errorData.error + ' Click the Google button below to sign in.',
+          isGoogleAccount: true 
+        });
+      } else {
+        setErrors({ email: errorData?.error || 'Failed to send verification code' });
+      }
     } finally {
       setLoading(false);
     }

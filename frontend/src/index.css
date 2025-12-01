@@ -16,19 +16,24 @@ body {
   animation: gradientShift 15s ease infinite;
   min-height: 100vh;
   color: #1a202c;
+  line-height: 1.6;
 }
 
 /* Ensure good text contrast globally */
 h1, h2, h3, h4, h5, h6 {
   color: #1a202c;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 p, span, div, label {
   color: #2d3748;
+  line-height: 1.6;
 }
 
 small {
-  color: #4a5568;
+  color: #718096;
+  font-size: 13px;
 }
 
 @keyframes gradientShift {

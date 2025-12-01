@@ -187,10 +187,10 @@ body {
 }
 
 .sidebar-footer {
-  padding: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px;
+  border-top: none;
   margin-top: auto;
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
   position: sticky;
   bottom: 0;
   backdrop-filter: blur(20px);
@@ -198,20 +198,31 @@ body {
 }
 
 .current-time {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.5) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 14px 16px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  transition: all 0.25s;
+}
+
+.current-time:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .current-time i {
-  font-size: 1.5rem;
+  font-size: 24px;
   color: #667eea;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .time-display {
@@ -219,22 +230,26 @@ body {
 }
 
 .time-display .time {
-  font-size: 1.1rem;
+  font-size: 16px;
   font-weight: 700;
   color: #2d3748;
-  margin-bottom: 0.25rem;
+  margin-bottom: 2px;
+  letter-spacing: -0.02em;
 }
 
 .time-display .date {
-  font-size: 0.85rem;
+  font-size: 13px;
   color: #718096;
   font-weight: 500;
 }
 
 .sidebar-menu {
   list-style: none;
-  padding: 0;
+  padding: 8px 12px;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .sidebar-menu li {
@@ -244,34 +259,49 @@ body {
 .sidebar-menu .nav-link {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 24px;
+  gap: 14px;
+  padding: 14px 18px;
   color: #4a5568;
   text-decoration: none;
-  transition: all 0.3s;
-  border-radius: 0;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
   position: relative;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
 }
 
 .sidebar-menu .nav-link:hover {
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(10px);
-  transform: translateX(5px);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  transform: translateX(4px);
   color: #2d3748;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .sidebar-menu .nav-link.active {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  border-right: 3px solid #4a5568;
-  font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.5) 100%);
+  backdrop-filter: blur(12px);
+  border-left: 4px solid #667eea;
+  padding-left: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
   color: #2d3748;
 }
 
 .sidebar-menu .nav-link i {
-  width: 20px;
+  width: 22px;
   text-align: center;
+  font-size: 18px;
+  transition: transform 0.25s;
+}
+
+.sidebar-menu .nav-link:hover i {
+  transform: scale(1.1);
+}
+
+.sidebar-menu .nav-link.active i {
+  color: #667eea;
 }
 
 .menu-divider {

@@ -245,6 +245,17 @@ def send_verification_code(request):
     
     # Check if email already exists
     if User.objects.filter(email=email).exists():
+        # Check if it's a Google user without a password
+        try:
+            user = User.objects.get(email=email)
+            # Check if user has a usable password
+            if not user.has_usable_password():
+                return Response({
+                    'error': 'This email is registered with Google. Please use Google Sign-In.',
+                    'suggestion': 'google_signin'
+                }, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            pass
         return Response({'error': 'Email already registered'}, status=status.HTTP_400_BAD_REQUEST)
     
     # Generate verification code
@@ -460,7 +471,9 @@ def google_auth(request):
         # Check if user exists with this email
         try:
             user = User.objects.get(email=email)
+            print(f"Found existing user: {user.username} ({email})")
         except User.DoesNotExist:
+            print(f"Creating new user for email: {email}")
             # Create new user
             username = email.split('@')[0]
             # Make username unique if it already exists
@@ -476,7 +489,9 @@ def google_auth(request):
                 first_name=first_name,
                 last_name=last_name
             )
-            user.set_unusable_password()  # Google users don't have passwords
+            # Don't set unusable password - allow users to set password later if they want
+            # This allows Google users to also login with email/password
+            print(f"Created new user via Google OAuth: {username} ({email})")
             user.save()
         
         # Get or create social account
@@ -557,15 +572,37 @@ def login_view(request):
         
         # Try to find user by email first, then by username
         user = None
+        user_obj = None
+        
         if '@' in username_or_email:
             # It's an email
             try:
                 user_obj = User.objects.get(email=username_or_email)
+                # Check if user has a usable password (not Google-only account)
+                if not user_obj.has_usable_password():
+                    print(f"User {username_or_email} tried to login with password but account is Google-only")
+                    return Response({
+                        'error': 'This account uses Google Sign-In. Please use the Google button to login.',
+                        'suggestion': 'google_signin'
+                    }, status=status.HTTP_401_UNAUTHORIZED)
+                
                 user = authenticate(username=user_obj.username, password=password)
             except User.DoesNotExist:
+                print(f"No user found with email: {username_or_email}")
                 pass
         else:
             # It's a username
+            try:
+                user_obj = User.objects.get(username=username_or_email)
+                if not user_obj.has_usable_password():
+                    print(f"User {username_or_email} tried to login with password but account is Google-only")
+                    return Response({
+                        'error': 'This account uses Google Sign-In. Please use the Google button to login.',
+                        'suggestion': 'google_signin'
+                    }, status=status.HTTP_401_UNAUTHORIZED)
+            except User.DoesNotExist:
+                pass
+            
             user = authenticate(username=username_or_email, password=password)
         
         if user:
@@ -576,9 +613,10 @@ def login_view(request):
                 'user': UserSerializer(user).data,
                 'message': 'Login successful'
             })
+        
         print(f"Authentication failed for: {username_or_email}")  # Debug log
         return Response(
-            {'error': 'Invalid credentials'},
+            {'error': 'Invalid credentials. Please check your email/username and password.'},
             status=status.HTTP_401_UNAUTHORIZED
         )
     print(f"Login validation errors: {serializer.errors}")  # Debug log
