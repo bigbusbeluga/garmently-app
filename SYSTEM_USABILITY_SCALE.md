@@ -137,6 +137,66 @@ Please rate your level of agreement with each statement on a scale of 1 to 5:
 
 ---
 
+## Open-Ended Feedback Questions
+
+Please provide detailed feedback to help us improve Garmently:
+
+### 26. What aspects of Garmently did you find most useful or enjoyable?
+**Your response:**
+_____________________________________________________________________________
+_____________________________________________________________________________
+_____________________________________________________________________________
+
+---
+
+### 27. What features or aspects of Garmently did you find frustrating or difficult to use?
+**Your response:**
+_____________________________________________________________________________
+_____________________________________________________________________________
+_____________________________________________________________________________
+
+---
+
+### 28. If you could change or improve one thing about Garmently, what would it be and why?
+**Your response:**
+_____________________________________________________________________________
+_____________________________________________________________________________
+_____________________________________________________________________________
+
+---
+
+### 29. Describe a specific task or goal you were trying to accomplish. Were you able to complete it successfully?
+**Your response:**
+_____________________________________________________________________________
+_____________________________________________________________________________
+_____________________________________________________________________________
+
+---
+
+### 30. What additional features would make Garmently more valuable for managing your wardrobe?
+**Your response:**
+_____________________________________________________________________________
+_____________________________________________________________________________
+_____________________________________________________________________________
+
+---
+
+### 31. How does Garmently compare to other wardrobe management methods or apps you've used?
+**Your response:**
+_____________________________________________________________________________
+_____________________________________________________________________________
+_____________________________________________________________________________
+
+---
+
+### 32. Any other comments, suggestions, or feedback you'd like to share?
+**Your response:**
+_____________________________________________________________________________
+_____________________________________________________________________________
+_____________________________________________________________________________
+
+---
+
 ## Scoring Instructions
 
 ### Standard SUS Scoring (Questions 1-10)
@@ -444,27 +504,22 @@ Compare Garmently's SUS score against:
 
 ## Follow-up Questions (Optional)
 
-After completing the 25-question survey, consider asking:
+After completing the 25 Likert-scale questions and 7 open-ended questions, consider asking:
 
-### Qualitative Insights:
-1. **What did you like most about Garmently?** (Open-ended)
-2. **What was the most frustrating aspect?** (Open-ended)
-3. **What feature would you add or improve?** (Open-ended)
-
-### Net Promoter Score:
-4. **How likely are you to recommend Garmently to a friend?** (0-10 scale)
+### Quantitative Metrics:
+1. **How likely are you to recommend Garmently to a friend?** (0-10 scale)
    - 0-6: Detractors
    - 7-8: Passives
    - 9-10: Promoters
 
-### Feature Usage:
-5. **Which feature do you use most frequently?** (Multiple choice)
+### Usage Patterns:
+2. **Which feature do you use most frequently?** (Multiple choice)
    - [ ] Wardrobe/Inventory
    - [ ] Mix & Match
    - [ ] Outfits
    - [ ] Dashboard
 
-6. **Which feature provides the most value to you?** (Multiple choice)
+3. **Which feature provides the most value to you?** (Multiple choice)
    - [ ] Image upload and storage
    - [ ] Outfit creation
    - [ ] Category organization
@@ -472,13 +527,13 @@ After completing the 25-question survey, consider asking:
    - [ ] Visual outfit canvas
 
 ### Demographic Data:
-7. **How often do you organize your physical wardrobe?**
+4. **How often do you organize your physical wardrobe?**
    - [ ] Daily
    - [ ] Weekly
    - [ ] Monthly
    - [ ] Rarely
 
-8. **What motivated you to try Garmently?**
+5. **What motivated you to try Garmently?**
    - [ ] Need better wardrobe organization
    - [ ] Want to plan outfits in advance
    - [ ] Reduce decision fatigue
