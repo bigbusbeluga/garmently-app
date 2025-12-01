@@ -272,22 +272,13 @@ Best regards,
 Garmently Team
         '''
         
-        # Use SendGrid HTTP API instead of SMTP (Railway blocks SMTP)
-        from sendgrid import SendGridAPIClient
-        from sendgrid.helpers.mail import Mail
-        
-        sg_message = Mail(
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to_emails=email,
-            subject=subject,
-            plain_text_content=message
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
         )
-        
-        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
-        response = sg.send(sg_message)
-        
-        print(f"SendGrid response status: {response.status_code}")
-        print(f"SendGrid response body: {response.body}")
         
         return Response({
             'message': 'Verification code sent successfully',
@@ -296,9 +287,6 @@ Garmently Team
     
     except Exception as e:
         print(f"Error sending email: {str(e)}")
-        print(f"Error type: {type(e)}")
-        if hasattr(e, 'body'):
-            print(f"SendGrid error body: {e.body}")
         # Still save the code so user can try again or we can implement retry logic
         # Still save the code so user can try again or we can implement retry logic
         return Response({
