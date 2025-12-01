@@ -356,21 +356,41 @@ def google_auth(request):
     import requests
     
     access_token = request.data.get('access_token')
+    id_token = request.data.get('id_token') or request.data.get('credential')
     
-    if not access_token:
-        return Response({'error': 'Access token is required'}, status=status.HTTP_400_BAD_REQUEST)
+    if not access_token and not id_token:
+        return Response({'error': 'Google credential is required'}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
-        # Verify token with Google
-        google_response = requests.get(
-            'https://www.googleapis.com/oauth2/v3/userinfo',
-            headers={'Authorization': f'Bearer {access_token}'}
-        )
+        # When the frontend provides an access token we can hit the standard userinfo endpoint.
+        if access_token:
+            google_response = requests.get(
+                'https://www.googleapis.com/oauth2/v3/userinfo',
+                headers={'Authorization': f'Bearer {access_token}'}
+            )
+        else:
+            # @react-oauth/google returns an ID token (aka credential); verify it explicitly.
+            google_response = requests.get(
+                'https://oauth2.googleapis.com/tokeninfo',
+                params={'id_token': id_token}
+            )
         
         if google_response.status_code != 200:
-            return Response({'error': 'Invalid access token'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Invalid Google credential'}, status=status.HTTP_400_BAD_REQUEST)
         
         user_info = google_response.json()
+
+        # Ensure token was issued for our client in production to avoid token reuse.
+        from django.conf import settings
+        configured_client_id = (
+            getattr(settings, 'SOCIALACCOUNT_PROVIDERS', {})
+            .get('google', {})
+            .get('APP', {})
+            .get('client_id')
+        )
+        audience = user_info.get('aud') or user_info.get('audience')
+        if configured_client_id and audience and audience != configured_client_id:
+            return Response({'error': 'Google credential does not match configured client'}, status=status.HTTP_400_BAD_REQUEST)
         email = user_info.get('email')
         google_id = user_info.get('sub')
         first_name = user_info.get('given_name', '')

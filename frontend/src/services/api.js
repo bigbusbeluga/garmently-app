@@ -107,11 +107,11 @@ export const apiService = {
     return response.data;
   },
 
-  googleAuth: async (accessToken) => {
+  googleAuth: async (googleCredential) => {
     if (USE_MOCK_DATA) {
       return { user: { username: 'googleuser', email: 'user@gmail.com' }, token: 'mock-token-google' };
     }
-    const response = await api.post('/api/auth/google/', { access_token: accessToken });
+    const response = await api.post('/api/auth/google/', { credential: googleCredential });
     return response.data;
   },
 
