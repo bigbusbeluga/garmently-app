@@ -119,17 +119,13 @@ LOGGING = {
 # Use a proper secret key from environment variables
 SECRET_KEY = os.getenv('SECRET_KEY', 'your-production-secret-key-here')
 
-# Production email settings - REQUIRED for email verification
-# Use custom backend to force IPv4 (fixes "Network is unreachable" on Railway)
-EMAIL_BACKEND = 'garmently_backend.email_backend.EmailBackendIPv4'
-EMAIL_HOST = 'smtp.googlemail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-EMAIL_TIMEOUT = 30
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER', 'noreply@garmently.com')
+# SendGrid Email Configuration
+EMAIL_BACKEND = 'anymail.backends.sendgrid.EmailBackend'
+ANYMAIL = {
+    'SENDGRID_API_KEY': os.getenv('SENDGRID_API_KEY'),
+}
+DEFAULT_FROM_EMAIL = os.getenv('SENDGRID_FROM_EMAIL', 'Garmently <noreply@garmently.com>')
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # Verification code expiry (in minutes)
 VERIFICATION_CODE_EXPIRY = 10

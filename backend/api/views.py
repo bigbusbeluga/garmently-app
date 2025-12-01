@@ -260,10 +260,8 @@ def send_verification_code(request):
     try:
         # Debug logging
         print(f"Attempting to send email to {email}")
-        print(f"EMAIL_HOST: {settings.EMAIL_HOST}")
-        print(f"EMAIL_PORT: {settings.EMAIL_PORT}")
         print(f"EMAIL_BACKEND: {settings.EMAIL_BACKEND}")
-        print(f"EMAIL_HOST_USER set: {'Yes' if settings.EMAIL_HOST_USER else 'No'}")
+        print(f"Verification code: {code}")
         
         subject = 'Garmently - Email Verification Code'
         message = f'''
@@ -286,6 +284,9 @@ Garmently Team
             [email],
             fail_silently=False,
         )
+        
+        # Log the verification code for console backend
+        print(f"✓ Email sent successfully! Verification code for {email}: {code}")
         
         return Response({
             'message': 'Verification code sent successfully',

@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',  # Token authentication
     'corsheaders',
     'storages',  # django-storages for S3
+    'anymail',  # SendGrid email backend
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
