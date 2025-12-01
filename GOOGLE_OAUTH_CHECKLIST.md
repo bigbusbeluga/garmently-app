@@ -128,16 +128,16 @@ Write your credentials here for reference:
 Project Name: Garmently
 
 Client ID: 
-_______________________________________________.apps.googleusercontent.com
+[Your Client ID - Keep this private]
 
 Client Secret: 
-GOCSPX-_______________________________________
+[Your Client Secret - Keep this private]
 
 Frontend URL (Vercel):
-https://________________________________________________.vercel.app
+https://garmently-app.vercel.app
 
 Backend URL (Railway):
-https://________________________________________________.railway.app
+https://garmently-app-production-up.railway.app
 ```
 
 ---
