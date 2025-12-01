@@ -17,6 +17,13 @@ function Outfits() {
   const fetchOutfits = async () => {
     try {
       const data = await apiService.getOutfits();
+      console.log('Fetched outfits:', data);
+      if (data.length > 0) {
+        console.log('First outfit garments:', data[0].garments);
+        if (data[0].garments && data[0].garments.length > 0) {
+          console.log('First garment image_url:', data[0].garments[0].image_url);
+        }
+      }
       setOutfits(data);
       setLoading(false);
     } catch (err) {
@@ -207,18 +214,35 @@ function Outfits() {
               <div className="outfit-canvas">
                 <h3>Outfit Layout</h3>
                 <div className="canvas-grid">
-                  {selectedOutfit.garments && selectedOutfit.garments.map((garment, index) => (
-                    <div key={garment.id} className="canvas-item">
-                      {garment.image_url ? (
-                        <img src={garment.image_url} alt={garment.name} />
-                      ) : (
-                        <div className="canvas-placeholder">
+                  {selectedOutfit.garments && selectedOutfit.garments.map((garment, index) => {
+                    console.log('Canvas garment:', garment.name, 'image_url:', garment.image_url);
+                    return (
+                      <div key={garment.id} className="canvas-item">
+                        {garment.image_url ? (
+                          <img 
+                            src={garment.image_url} 
+                            alt={garment.name}
+                            onError={(e) => {
+                              console.error('Failed to load image:', garment.image_url);
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                            }}
+                          />
+                        ) : (
+                          <div className="canvas-placeholder">
+                            <i className="fas fa-tshirt"></i>
+                          </div>
+                        )}
+                        <div 
+                          className="canvas-placeholder" 
+                          style={{ display: garment.image_url ? 'none' : 'flex' }}
+                        >
                           <i className="fas fa-tshirt"></i>
                         </div>
-                      )}
-                      <div className="canvas-item-label">{garment.name}</div>
-                    </div>
-                  ))}
+                        <div className="canvas-item-label">{garment.name}</div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -259,12 +283,22 @@ function Outfits() {
                     {selectedOutfit.garments && selectedOutfit.garments.map((garment) => (
                       <div key={garment.id} className="garment-item-modal">
                         {garment.image_url ? (
-                          <img src={garment.image_url} alt={garment.name} />
-                        ) : (
-                          <div className="garment-thumb-placeholder">
-                            <i className="fas fa-tshirt"></i>
-                          </div>
-                        )}
+                          <img 
+                            src={garment.image_url} 
+                            alt={garment.name}
+                            onError={(e) => {
+                              console.error('Failed to load garment image:', garment.image_url);
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        <div 
+                          className="garment-thumb-placeholder"
+                          style={{ display: garment.image_url ? 'none' : 'flex' }}
+                        >
+                          <i className="fas fa-tshirt"></i>
+                        </div>
                         <div className="garment-item-info">
                           <p className="garment-item-name">{garment.name}</p>
                           <p className="garment-item-meta">
