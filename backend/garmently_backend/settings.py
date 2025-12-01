@@ -203,7 +203,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False').lower() == 'true'
 
 # Accept additional dynamically generated preview domains (e.g. Vercel) and backend URLs.
 CORS_ALLOWED_ORIGIN_REGEXES = [
