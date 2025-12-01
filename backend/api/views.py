@@ -208,36 +208,65 @@ def mixmatch(request):
     )
     categories = Category.objects.filter(
         garment__owner=request.user
-    ).distinct()
-    
-    context = {
-        'garments': available_garments,
-        'categories': categories,
-        'suggested_outfit': None  # TODO: Add AI-based suggestions
-    }
-    return render(request, 'api/mixmatch.html', context)
-
-@login_required
-def wear_garment(request, garment_id):
-    """Mark garment as worn"""
-    garment = get_object_or_404(Garment, id=garment_id, owner=request.user)
-    
-    if garment.is_available():
-        garment.mark_worn()
-        garment.status = 'dirty'
-        garment.save()
-        
-        # Create wear history
-        WearHistory.objects.create(
-            garment=garment,
-            occasion=request.POST.get('occasion', ''),
-            weather=request.POST.get('weather', '')
+    try:
+        from django.conf import settings
+        configured_client_id = (
+            getattr(settings, 'SOCIALACCOUNT_PROVIDERS', {})
+            .get('google', {})
+            .get('APP', {})
+            .get('client_id')
         )
-        
-        messages.success(request, f'{garment.name} marked as worn!')
-    else:
-        messages.error(request, 'This garment is not available to wear!')
-    
+
+        # When the frontend provides an access token we can hit the standard userinfo endpoint.
+        if access_token:
+            google_response = requests.get(
+                'https://www.googleapis.com/oauth2/v3/userinfo',
+                headers={'Authorization': f'Bearer {access_token}'}
+            )
+
+            if google_response.status_code != 200:
+                return Response({'error': 'Invalid Google credential'}, status=status.HTTP_400_BAD_REQUEST)
+
+            user_info = google_response.json()
+
+            audience = user_info.get('aud') or user_info.get('audience')
+            if configured_client_id and audience and audience != configured_client_id:
+                return Response({'error': 'Google credential does not match configured client'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                from google.oauth2 import id_token as google_id_token
+                from google.auth.transport import requests as google_auth_requests
+            except ImportError:
+                return Response(
+                    {'error': 'Google authentication library is not available on the server'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+
+            try:
+                id_info = google_id_token.verify_oauth2_token(
+                    id_token,
+                    google_auth_requests.Request(),
+                    configured_client_id or None
+                )
+            except ValueError as exc:
+                return Response(
+                    {
+                        'error': 'Invalid Google credential',
+                        'detail': str(exc)
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            if not id_info.get('email_verified', True):
+                return Response({'error': 'Google account email is not verified'}, status=status.HTTP_400_BAD_REQUEST)
+
+            user_info = {
+                'email': id_info.get('email'),
+                'sub': id_info.get('sub'),
+                'given_name': id_info.get('given_name', ''),
+                'family_name': id_info.get('family_name', ''),
+                'picture': id_info.get('picture', ''),
+            }
     return redirect('wardrobe')
 
 def signup(request):
