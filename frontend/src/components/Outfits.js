@@ -234,41 +234,78 @@ function Outfits() {
               <div className="outfit-canvas">
                 <h3>Outfit Layout</h3>
                 {selectedOutfit.garments && selectedOutfit.garments.length > 0 ? (
-                  <div className="canvas-grid">
-                    {selectedOutfit.garments.map((garment, index) => {
-                      console.log(`Canvas render - Garment ${index + 1}:`, {
-                        name: garment.name,
-                        image_url: garment.image_url,
-                        has_image: !!garment.image_url
-                      });
-                      return (
-                        <div key={garment.id} className="canvas-item">
-                          {garment.image_url ? (
-                            <img 
-                              src={garment.image_url} 
-                              alt={garment.name}
-                              onLoad={() => console.log('✅ Image loaded:', garment.image_url)}
-                              onError={(e) => {
-                                console.error('❌ Failed to load image:', garment.image_url);
-                                e.target.style.display = 'none';
-                                e.target.nextSibling.style.display = 'flex';
-                              }}
-                            />
-                          ) : (
-                            <div className="canvas-placeholder">
-                              <i className="fas fa-tshirt"></i>
-                            </div>
-                          )}
+                  <div className="canvas-positioned" style={{ position: 'relative', width: '100%', minHeight: '400px', border: '2px dashed rgba(0,0,0,0.1)', borderRadius: '12px', background: 'rgba(255,255,255,0.5)' }}>
+                    {(() => {
+                      // Parse layout data if available
+                      let layoutMap = {};
+                      if (selectedOutfit.layout) {
+                        try {
+                          const layoutData = JSON.parse(selectedOutfit.layout);
+                          layoutData.forEach(item => {
+                            layoutMap[item.id] = item;
+                          });
+                          console.log('Parsed layout data:', layoutMap);
+                        } catch (e) {
+                          console.error('Failed to parse layout:', e);
+                        }
+                      }
+
+                      return selectedOutfit.garments.map((garment, index) => {
+                        const layout = layoutMap[garment.id];
+                        const position = layout?.position || { x: 10 + (index % 4) * 160, y: 10 + Math.floor(index / 4) * 170 };
+                        const zIndex = layout?.zIndex || index;
+
+                        console.log(`Canvas render - Garment ${index + 1}:`, {
+                          name: garment.name,
+                          position,
+                          zIndex,
+                          image_url: garment.image_url,
+                          has_image: !!garment.image_url
+                        });
+
+                        return (
                           <div 
-                            className="canvas-placeholder" 
-                            style={{ display: garment.image_url ? 'none' : 'flex' }}
+                            key={garment.id} 
+                            className="canvas-item-positioned"
+                            style={{
+                              position: 'absolute',
+                              left: `${position.x}px`,
+                              top: `${position.y}px`,
+                              width: '150px',
+                              height: '150px',
+                              zIndex: zIndex,
+                            }}
                           >
-                            <i className="fas fa-tshirt"></i>
+                            {garment.image_url ? (
+                              <img 
+                                src={garment.image_url} 
+                                alt={garment.name}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px', border: '2px solid rgba(0,0,0,0.1)' }}
+                                onLoad={() => console.log('✅ Image loaded:', garment.image_url)}
+                                onError={(e) => {
+                                  console.error('❌ Failed to load image:', garment.image_url);
+                                  e.target.style.display = 'none';
+                                  e.target.nextSibling.style.display = 'flex';
+                                }}
+                              />
+                            ) : (
+                              <div className="canvas-placeholder" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e9ecef', borderRadius: '12px' }}>
+                                <i className="fas fa-tshirt" style={{ fontSize: '2rem', color: '#6c757d' }}></i>
+                              </div>
+                            )}
+                            <div 
+                              className="canvas-placeholder" 
+                              style={{ display: garment.image_url ? 'none' : 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', background: '#e9ecef', borderRadius: '12px' }}
+                            >
+                              <i className="fas fa-tshirt" style={{ fontSize: '2rem', color: '#6c757d' }}></i>
+                            </div>
+                            <div className="canvas-item-label" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)', color: 'white', padding: '0.5rem', fontSize: '0.75rem', textAlign: 'center', borderRadius: '0 0 12px 12px' }}>
+                              {garment.name}
+                            </div>
                           </div>
-                          <div className="canvas-item-label">{garment.name}</div>
-                        </div>
-                      );
-                    })}
+                        );
+                      });
+                    })()}
                   </div>
                 ) : (
                   <div className="empty-canvas">

@@ -161,14 +161,22 @@ function MixMatch() {
 
     setSaving(true);
     try {
+      // Prepare garment layout data with positions
+      const garmentLayout = selectedGarments.map(g => ({
+        id: g.id,
+        position: g.position,
+        zIndex: g.zIndex
+      }));
+
       const outfitData = {
         name: outfitName,
-        garment_ids: selectedGarments.map(g => g.id),  // Changed from 'garments' to 'garment_ids'
+        garment_ids: selectedGarments.map(g => g.id),
         occasion: outfitOccasion,
         notes: outfitNotes,
+        layout: JSON.stringify(garmentLayout), // Save layout as JSON string
       };
 
-      console.log('Saving outfit with data:', outfitData);
+      console.log('Saving outfit with layout data:', outfitData);
       await apiService.createOutfit(outfitData);
       setMessage({ type: 'success', text: 'Outfit saved successfully!' });
       

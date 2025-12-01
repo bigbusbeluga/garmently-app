@@ -106,6 +106,7 @@ class Outfit(models.Model):
     occasion = models.CharField(max_length=20, choices=OCCASION_CHOICES, blank=True)
     season = models.CharField(max_length=10, choices=Garment.SEASON_CHOICES, blank=True)
     notes = models.TextField(blank=True)
+    layout = models.TextField(blank=True, help_text="JSON string storing garment positions and z-index")
     
     # Rating and feedback
     rating = models.PositiveSmallIntegerField(null=True, blank=True, help_text="Rate 1-5 stars")

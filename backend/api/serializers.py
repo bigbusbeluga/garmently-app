@@ -127,7 +127,7 @@ class OutfitSerializer(serializers.ModelSerializer):
         model = Outfit
         fields = [
             'id', 'name', 'garments', 'garment_ids', 'occasion', 'occasion_display',
-            'season', 'season_display', 'notes', 'rating', 'is_favorite',
+            'season', 'season_display', 'notes', 'layout', 'rating', 'is_favorite',
             'times_worn', 'last_worn', 'owner', 'owner_username', 'weather',
             'date', 'garment_count', 'is_complete', 'created_at', 'updated_at'
         ]
