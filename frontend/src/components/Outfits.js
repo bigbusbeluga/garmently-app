@@ -81,6 +81,43 @@ function Outfits() {
     setSelectedOutfit(null);
   };
 
+  const downloadOutfitImage = async (outfit) => {
+    try {
+      // Use html2canvas to capture the canvas
+      const html2canvas = (await import('html2canvas')).default;
+      const canvas = document.getElementById(`outfit-canvas-${outfit.id}`);
+      
+      if (!canvas) {
+        alert('Canvas not found');
+        return;
+      }
+
+      // Capture the canvas
+      const capturedCanvas = await html2canvas(canvas, {
+        backgroundColor: '#f8f9fa',
+        scale: 2, // Higher quality
+        logging: false,
+        useCORS: true, // Allow cross-origin images
+        allowTaint: true
+      });
+
+      // Convert to blob and download
+      capturedCanvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${outfit.name.replace(/\s+/g, '_')}_outfit.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      });
+    } catch (err) {
+      console.error('Error downloading outfit:', err);
+      alert('Failed to download outfit image. Please try again.');
+    }
+  };
+
   const toggleFavorite = async (outfit) => {
     try {
       const updatedOutfit = await apiService.updateOutfit(outfit.id, {
@@ -232,41 +269,91 @@ function Outfits() {
             <div className="modal-content">
               {/* Outfit Canvas - Visual Layout */}
               <div className="outfit-canvas">
-                <h3>Outfit Layout</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h3 style={{ margin: 0 }}>Outfit Layout</h3>
+                  {selectedOutfit.garments && selectedOutfit.garments.length > 0 && (
+                    <button 
+                      className="btn btn-primary"
+                      onClick={() => downloadOutfitImage(selectedOutfit)}
+                      style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
+                    >
+                      <i className="fas fa-download"></i> Download Outfit
+                    </button>
+                  )}
+                </div>
                 {selectedOutfit.garments && selectedOutfit.garments.length > 0 ? (
-                  <div className="canvas-positioned" style={{ position: 'relative', width: '100%', minHeight: '400px', border: '2px dashed rgba(0,0,0,0.1)', borderRadius: '12px', background: 'rgba(255,255,255,0.5)' }}>
+                  <div 
+                    id={`outfit-canvas-${selectedOutfit.id}`}
+                    className="canvas-positioned" 
+                    style={{ 
+                      position: 'relative', 
+                      width: '100%', 
+                      minHeight: '500px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: '2px dashed rgba(0,0,0,0.1)', 
+                      borderRadius: '12px', 
+                      background: '#f8f9fa',
+                      overflow: 'hidden'
+                    }}
+                  >
                     {(() => {
                       // Parse layout data if available
                       let layoutMap = {};
+                      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+                      
                       if (selectedOutfit.layout) {
                         try {
                           const layoutData = JSON.parse(selectedOutfit.layout);
                           layoutData.forEach(item => {
                             layoutMap[item.id] = item;
+                            // Calculate bounds
+                            minX = Math.min(minX, item.position.x);
+                            maxX = Math.max(maxX, item.position.x + 150);
+                            minY = Math.min(minY, item.position.y);
+                            maxY = Math.max(maxY, item.position.y + 150);
                           });
                           console.log('Parsed layout data:', layoutMap);
+                          console.log('Bounds:', { minX, maxX, minY, maxY });
                         } catch (e) {
                           console.error('Failed to parse layout:', e);
                         }
                       }
 
+                      // Calculate centering offset
+                      const contentWidth = maxX - minX;
+                      const contentHeight = maxY - minY;
+                      const containerWidth = 800; // Approximate container width
+                      const offsetX = (containerWidth - contentWidth) / 2 - minX;
+                      const offsetY = 20 - minY; // Small top padding
+
                       return selectedOutfit.garments.map((garment, index) => {
                         const layout = layoutMap[garment.id];
-                        const position = layout?.position || { x: 10 + (index % 4) * 160, y: 10 + Math.floor(index / 4) * 170 };
+                        const basePosition = layout?.position || { 
+                          x: 325 + (index % 2) * 20, // Center with slight offset
+                          y: 20 + index * 160  // Stack vertically
+                        };
+                        
+                        // Apply centering offset if we have layout data
+                        const position = Object.keys(layoutMap).length > 0 ? {
+                          x: basePosition.x + offsetX,
+                          y: basePosition.y + offsetY
+                        } : basePosition;
+                        
                         const zIndex = layout?.zIndex || index;
 
                         console.log(`Canvas render - Garment ${index + 1}:`, {
                           name: garment.name,
                           position,
                           zIndex,
-                          image_url: garment.image_url,
-                          has_image: !!garment.image_url
+                          image_url: garment.image_url
                         });
 
                         return (
                           <div 
                             key={garment.id} 
-                            className="canvas-item-positioned"
+                            className="canvas-item-positioned outfit-garment-item"
                             style={{
                               position: 'absolute',
                               left: `${position.x}px`,
@@ -280,7 +367,15 @@ function Outfits() {
                               <img 
                                 src={garment.image_url} 
                                 alt={garment.name}
-                                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px', border: '2px solid rgba(0,0,0,0.1)' }}
+                                crossOrigin="anonymous"
+                                style={{ 
+                                  width: '100%', 
+                                  height: '100%', 
+                                  objectFit: 'contain',
+                                  background: 'white',
+                                  borderRadius: '8px',
+                                  padding: '5px'
+                                }}
                                 onLoad={() => console.log('✅ Image loaded:', garment.image_url)}
                                 onError={(e) => {
                                   console.error('❌ Failed to load image:', garment.image_url);
@@ -289,18 +384,33 @@ function Outfits() {
                                 }}
                               />
                             ) : (
-                              <div className="canvas-placeholder" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e9ecef', borderRadius: '12px' }}>
-                                <i className="fas fa-tshirt" style={{ fontSize: '2rem', color: '#6c757d' }}></i>
+                              <div className="canvas-placeholder" style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                background: 'white', 
+                                borderRadius: '8px',
+                                border: '2px solid #dee2e6'
+                              }}>
+                                <i className="fas fa-tshirt" style={{ fontSize: '2.5rem', color: '#adb5bd' }}></i>
                               </div>
                             )}
                             <div 
                               className="canvas-placeholder" 
-                              style={{ display: garment.image_url ? 'none' : 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', background: '#e9ecef', borderRadius: '12px' }}
+                              style={{ 
+                                display: garment.image_url ? 'none' : 'flex', 
+                                width: '100%', 
+                                height: '100%', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                background: 'white', 
+                                borderRadius: '8px',
+                                border: '2px solid #dee2e6'
+                              }}
                             >
-                              <i className="fas fa-tshirt" style={{ fontSize: '2rem', color: '#6c757d' }}></i>
-                            </div>
-                            <div className="canvas-item-label" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)', color: 'white', padding: '0.5rem', fontSize: '0.75rem', textAlign: 'center', borderRadius: '0 0 12px 12px' }}>
-                              {garment.name}
+                              <i className="fas fa-tshirt" style={{ fontSize: '2.5rem', color: '#adb5bd' }}></i>
                             </div>
                           </div>
                         );
