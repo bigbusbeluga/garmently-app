@@ -7,7 +7,17 @@
 }
 
 .auth-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);\n  backdrop-filter: blur(30px);\n  -webkit-backdrop-filter: blur(30px);\n  border: 1px solid rgba(0, 0, 0, 0.06);\n  border-radius: 24px;\n  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);\n  width: 100%;\n  max-width: 480px;\n  padding: 48px;\n  animation: slideUp 0.4s ease-out;\n}
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 480px;
+  padding: 48px;
+  animation: slideUp 0.4s ease-out;
+}
 
 @keyframes slideUp {
   from {
