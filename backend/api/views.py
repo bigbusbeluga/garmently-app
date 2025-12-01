@@ -351,10 +351,17 @@ def google_auth(request):
     from django.contrib.auth.models import User
     import requests
     
+    print("=== GOOGLE AUTH DEBUG ===")
+    print(f"Request data: {request.data}")
+    
     access_token = request.data.get('access_token')
     id_token = request.data.get('id_token') or request.data.get('credential')
     
+    print(f"access_token present: {bool(access_token)}")
+    print(f"id_token/credential present: {bool(id_token)}")
+    
     if not access_token and not id_token:
+        print("ERROR: No credential provided")
         return Response({'error': 'Google credential is required'}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
