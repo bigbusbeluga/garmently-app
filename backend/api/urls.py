@@ -16,6 +16,7 @@ api_urlpatterns = [
     # Authentication endpoints
     path('api/auth/send-verification/', views.send_verification_code, name='send_verification'),
     path('api/auth/verify-code/', views.verify_code, name='verify_code'),
+    path('api/auth/google/', views.google_auth, name='google_auth'),
     path('api/auth/register/', views.register, name='api_register'),
     path('api/auth/login/', views.login_view, name='api_login'),
     path('api/auth/logout/', views.logout_view, name='api_logout'),

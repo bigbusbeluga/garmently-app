@@ -347,6 +347,100 @@ def verify_code(request):
     except EmailVerification.DoesNotExist:
         return Response({'error': 'Invalid verification code'}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def google_auth(request):
+    """Handle Google OAuth authentication"""
+    from allauth.socialaccount.models import SocialAccount
+    from django.contrib.auth.models import User
+    import requests
+    
+    access_token = request.data.get('access_token')
+    
+    if not access_token:
+        return Response({'error': 'Access token is required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        # Verify token with Google
+        google_response = requests.get(
+            'https://www.googleapis.com/oauth2/v3/userinfo',
+            headers={'Authorization': f'Bearer {access_token}'}
+        )
+        
+        if google_response.status_code != 200:
+            return Response({'error': 'Invalid access token'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user_info = google_response.json()
+        email = user_info.get('email')
+        google_id = user_info.get('sub')
+        first_name = user_info.get('given_name', '')
+        last_name = user_info.get('family_name', '')
+        picture = user_info.get('picture', '')
+        
+        if not email or not google_id:
+            return Response({'error': 'Email or Google ID not found'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check if user exists with this email
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            # Create new user
+            username = email.split('@')[0]
+            # Make username unique if it already exists
+            base_username = username
+            counter = 1
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}{counter}"
+                counter += 1
+            
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                first_name=first_name,
+                last_name=last_name
+            )
+            user.set_unusable_password()  # Google users don't have passwords
+            user.save()
+        
+        # Get or create social account
+        social_account, created = SocialAccount.objects.get_or_create(
+            provider='google',
+            uid=google_id,
+            defaults={'user': user, 'extra_data': user_info}
+        )
+        
+        if not created and social_account.user != user:
+            # Link social account to this user
+            social_account.user = user
+            social_account.extra_data = user_info
+            social_account.save()
+        
+        # Create or get token
+        token, _ = Token.objects.get_or_create(user=user)
+        
+        return Response({
+            'token': token.key,
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'profile_picture': picture
+            }
+        }, status=status.HTTP_200_OK)
+    
+    except requests.RequestException as e:
+        return Response({
+            'error': 'Failed to verify Google token',
+            'detail': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except Exception as e:
+        return Response({
+            'error': 'Authentication failed',
+            'detail': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 # Authentication Endpoints
 @api_view(['POST'])
 @permission_classes([AllowAny])

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { apiService } from '../services/api';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import './Auth.css';
 
 function Login() {
@@ -54,6 +55,25 @@ function Login() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await apiService.googleAuth(credentialResponse.credential);
+      login(response.user, response.token);
+      navigate('/');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Google sign-in failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError('Google sign-in was unsuccessful. Please try again.');
   };
 
   return (
@@ -120,6 +140,26 @@ function Login() {
             )}
           </button>
         </form>
+
+        <div className="divider" style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 0' }}>
+          <div style={{ flex: 1, height: '1px', backgroundColor: '#e5e7eb' }}></div>
+          <span style={{ padding: '0 1rem', color: '#6b7280', fontSize: '0.875rem' }}>OR</span>
+          <div style={{ flex: 1, height: '1px', backgroundColor: '#e5e7eb' }}></div>
+        </div>
+
+        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              text="signin_with"
+              shape="rectangular"
+              theme="outline"
+              size="large"
+              width="100%"
+            />
+          </div>
+        </GoogleOAuthProvider>
 
         <div className="auth-footer">
           <p>

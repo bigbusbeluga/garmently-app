@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { apiService } from '../services/api';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import './Auth.css';
 
 function Signup() {
@@ -122,6 +123,25 @@ function Signup() {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setErrors({});
+    setLoading(true);
+
+    try {
+      const response = await apiService.googleAuth(credentialResponse.credential);
+      login(response.user, response.token);
+      navigate('/');
+    } catch (err) {
+      setErrors({ general: err.response?.data?.error || 'Google sign-in failed. Please try again.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setErrors({ general: 'Google sign-in was unsuccessful. Please try again.' });
+  };
+
   return (
     <div className="auth-container">
       <div className="auth-card">
@@ -183,6 +203,27 @@ function Signup() {
                 </>
               )}
             </button>
+
+            <div className="divider" style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 0' }}>
+              <div style={{ flex: 1, height: '1px', backgroundColor: '#e5e7eb' }}></div>
+              <span style={{ padding: '0 1rem', color: '#6b7280', fontSize: '0.875rem' }}>OR</span>
+              <div style={{ flex: 1, height: '1px', backgroundColor: '#e5e7eb' }}></div>
+            </div>
+
+            <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  useOneTap
+                  text="signup_with"
+                  shape="rectangular"
+                  theme="outline"
+                  size="large"
+                  width="100%"
+                />
+              </div>
+            </GoogleOAuthProvider>
           </form>
         )}
 
