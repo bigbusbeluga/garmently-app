@@ -75,6 +75,23 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
+# Accept additional dynamically generated preview domains (e.g. Vercel) and backend URLs.
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
+    r"^https://.*\.railway\.app$",
+]
+
+# Allow posting from trusted origins so CSRF checks pass on authenticated endpoints.
+CSRF_TRUSTED_ORIGINS = [
+    "https://garmently-app.vercel.app",
+    "https://garmently-app-git-main-bigbusbelugas-projects.vercel.app",
+    "https://garmently-app-production.up.railway.app",
+    "https://garmently-app-production.railway.app",
+    "https://garmently-backend.up.railway.app",
+    "https://*.vercel.app",
+    "https://*.railway.app",
+]
+
 # Logging configuration for production
 LOGGING = {
     'version': 1,
@@ -102,10 +119,14 @@ LOGGING = {
 # Use a proper secret key from environment variables
 SECRET_KEY = os.getenv('SECRET_KEY', 'your-production-secret-key-here')
 
-# Production email settings (optional)
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+# Production email settings - REQUIRED for email verification
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER', 'noreply@garmently.com')
+
+# Verification code expiry (in minutes)
+VERIFICATION_CODE_EXPIRY = 10
