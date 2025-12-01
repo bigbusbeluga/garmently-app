@@ -512,14 +512,7 @@ def google_auth(request):
         
         return Response({
             'token': token.key,
-            'user': {
-                'id': user.id,
-                'username': user.username,
-                'email': user.email,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'profile_picture': picture
-            }
+            'user': UserSerializer(user).data
         }, status=status.HTTP_200_OK)
     
     except requests.RequestException as e:
