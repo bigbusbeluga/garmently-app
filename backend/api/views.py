@@ -259,9 +259,13 @@ def send_verification_code(request):
     # Send email
     try:
         # Debug logging
-        print(f"Attempting to send email to {email}")
+        print(f"=== EMAIL DEBUG INFO ===")
+        print(f"Attempting to send email to: {email}")
         print(f"EMAIL_BACKEND: {settings.EMAIL_BACKEND}")
+        print(f"DEFAULT_FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
+        print(f"SENDGRID_API_KEY present: {'Yes' if hasattr(settings, 'ANYMAIL') and settings.ANYMAIL.get('SENDGRID_API_KEY') else 'No'}")
         print(f"Verification code: {code}")
+        print(f"=======================")
         
         subject = 'Garmently - Email Verification Code'
         message = f'''
@@ -294,7 +298,12 @@ Garmently Team
         }, status=status.HTTP_200_OK)
     
     except Exception as e:
+        import traceback
+        print(f"=== EMAIL ERROR ===")
         print(f"Error sending email: {str(e)}")
+        print(f"Full traceback:")
+        print(traceback.format_exc())
+        print(f"==================")
         # Still save the code so user can try again or we can implement retry logic
         # Still save the code so user can try again or we can implement retry logic
         return Response({
