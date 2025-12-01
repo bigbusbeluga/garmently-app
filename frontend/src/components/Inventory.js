@@ -42,6 +42,7 @@ function Inventory() {
       if (Array.isArray(data) && data.length > 0) {
         const categoryNames = data.map(cat => cat.name);
         setCategories(['All', 'Favorites', ...categoryNames]);
+        console.log('Categories set to:', ['All', 'Favorites', ...categoryNames]);
       } else {
         console.warn('No categories returned, using fallback');
         setCategories(['All', 'Favorites']);
@@ -53,11 +54,33 @@ function Inventory() {
     }
   };
 
-  const filteredItems = selectedCategory === 'All' 
-    ? items 
-    : selectedCategory === 'Favorites'
-    ? items.filter(item => item.is_favorite)
-    : items.filter(item => item.category_name === selectedCategory);
+  // Filter items based on selected category
+  const filteredItems = React.useMemo(() => {
+    console.log('Filtering with category:', selectedCategory);
+    console.log('Total items:', items.length);
+    
+    if (selectedCategory === 'All') {
+      return items;
+    }
+    
+    if (selectedCategory === 'Favorites') {
+      const favorites = items.filter(item => item.is_favorite);
+      console.log('Filtered favorites:', favorites.length);
+      return favorites;
+    }
+    
+    // Filter by category name
+    const filtered = items.filter(item => {
+      const matches = item.category_name === selectedCategory;
+      if (!matches) {
+        console.log(`Item "${item.name}" category_name: "${item.category_name}" vs selected: "${selectedCategory}"`);
+      }
+      return matches;
+    });
+    
+    console.log(`Filtered ${filtered.length} items for category: ${selectedCategory}`);
+    return filtered;
+  }, [items, selectedCategory]);
 
   if (loading) {
     return (
