@@ -182,6 +182,56 @@
   font-weight: 500;
 }
 
+/* Outfit Preview in Recommendations */
+.outfit-preview {
+  display: flex;
+  gap: 0.75rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.preview-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.preview-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.preview-placeholder {
+  width: 80px;
+  height: 80px;
+  background: #f3f4f6;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.preview-placeholder i {
+  font-size: 2rem;
+  color: #9ca3af;
+}
+
+.preview-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 600;
+  text-align: center;
+}
+
 /* Avatar Guide */
 .avatar-guide {
   position: absolute;

@@ -287,19 +287,39 @@ function MixMatch() {
         <div className="ai-recommendations">
           <h3>✨ Bibbidi-Bobbidi-Boo Recommended Outfits</h3>
           <div className="recommendations-grid">
-            {aiRecommendations.outfits.map((outfit, index) => (
-              <div key={index} className="recommendation-card">
-                <h4>{outfit.name}</h4>
-                <p className="reasoning">{outfit.reasoning}</p>
-                <p className="style-tip"><strong>💡 Style Tip:</strong> {outfit.style_tip}</p>
-                <button 
-                  onClick={() => applyAIOutfit(outfit)}
-                  className="btn btn-primary btn-sm"
-                >
-                  Try This Outfit
-                </button>
-              </div>
-            ))}
+            {aiRecommendations.outfits.map((outfit, index) => {
+              const outfitGarments = garments.filter(g => outfit.garment_ids.includes(g.id));
+              return (
+                <div key={index} className="recommendation-card">
+                  <h4>{outfit.name}</h4>
+                  
+                  {/* Outfit Preview */}
+                  <div className="outfit-preview">
+                    {outfitGarments.map((garment, idx) => (
+                      <div key={garment.id} className="preview-item">
+                        {garment.image_url ? (
+                          <img src={garment.image_url} alt={garment.name} />
+                        ) : (
+                          <div className="preview-placeholder">
+                            <i className="fas fa-tshirt"></i>
+                          </div>
+                        )}
+                        <span className="preview-label">{garment.category_name}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <p className="reasoning">{outfit.reasoning}</p>
+                  <p className="style-tip"><strong>💡 Style Tip:</strong> {outfit.style_tip}</p>
+                  <button 
+                    onClick={() => applyAIOutfit(outfit)}
+                    className="btn btn-primary btn-sm"
+                  >
+                    Try This Outfit
+                  </button>
+                </div>
+              );
+            })}
           </div>
           <button onClick={() => setAiRecommendations(null)} className="btn btn-secondary btn-sm">
             Close Recommendations

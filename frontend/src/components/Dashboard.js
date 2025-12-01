@@ -127,7 +127,7 @@ function Dashboard() {
           </div>
           <div className="card-body">
             <p className="empty-message">
-              No outfits yet. <Link to="/create-outfit">Create your first outfit!</Link>
+              No outfits yet. <Link to="/mixmatch">Create your first outfit!</Link>
             </p>
           </div>
         </div>
@@ -144,7 +144,7 @@ function Dashboard() {
               <i className="fas fa-plus"></i>
               <span>Add Garment</span>
             </Link>
-            <Link to="/create-outfit" className="action-btn btn-success">
+            <Link to="/mixmatch" className="action-btn btn-success">
               <i className="fas fa-users"></i>
               <span>Create Outfit</span>
             </Link>
