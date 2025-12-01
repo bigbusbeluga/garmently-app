@@ -90,6 +90,19 @@
   cursor: not-allowed;
 }
 
+.btn-ai.btn-random {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white !important;
+  border-color: rgba(102, 126, 234, 0.8);
+  font-weight: 700;
+}
+
+.btn-ai.btn-random:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
 .ai-loading {
   margin-top: 1rem;
   padding: 1rem;

@@ -254,8 +254,11 @@ function MixMatch() {
       {/* AI Recommendation Section */}
       <div className="ai-section">
         <h3><i className="fas fa-magic"></i> Bibbidi-Bobbidi-Boo Outfit Assistant</h3>
-        <p>Get personalized outfit recommendations based on themes:</p>
+        <p>Get personalized outfit recommendations (one item per category):</p>
         <div className="ai-buttons">
+          <button onClick={() => getAIRecommendations('random')} disabled={loadingAI} className="btn btn-ai btn-random">
+            <i className="fas fa-shuffle"></i> Random Outfit
+          </button>
           <button onClick={() => getAIRecommendations('casual school day')} disabled={loadingAI} className="btn btn-ai">
             Casual School
           </button>

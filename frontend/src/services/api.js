@@ -198,19 +198,24 @@ export const apiService = {
     return response.data;
   },
 
-  updateGarment: async (id, formData) => {
+  updateGarment: async (id, data) => {
     if (USE_MOCK_DATA) {
       const index = mockGarments.findIndex(g => g.id === id);
       if (index !== -1) {
-        mockGarments[index] = { ...mockGarments[index], ...Object.fromEntries(formData) };
+        const updates = data instanceof FormData ? Object.fromEntries(data) : data;
+        mockGarments[index] = { ...mockGarments[index], ...updates };
         // Save to localStorage
         localStorage.setItem('demo_garments', JSON.stringify(mockGarments));
         return mockGarments[index];
       }
     }
-    const response = await api.put(`/api/garments-api/${id}/`, formData, {
-      headers: {
+    // Check if data is FormData or plain object
+    const isFormData = data instanceof FormData;
+    const response = await api.patch(`/api/garments-api/${id}/`, data, {
+      headers: isFormData ? {
         'Content-Type': 'multipart/form-data',
+      } : {
+        'Content-Type': 'application/json',
       },
     });
     return response.data;

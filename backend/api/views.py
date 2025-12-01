@@ -463,9 +463,14 @@ def ai_outfit_recommendation(request):
 Wardrobe items:
 {json.dumps(wardrobe_items, indent=2)}
 
+IMPORTANT RULES:
+- Pick ONLY ONE item from each category per outfit
+- Do not repeat the same category multiple times in one outfit
+- Create balanced, complete outfits
+
 For each outfit, provide:
 1. A creative outfit name
-2. List of garment IDs to use (from the wardrobe above)
+2. List of garment IDs to use (ONE per category only)
 3. Brief reasoning why this combination works
 4. Style tip
 
@@ -499,30 +504,34 @@ Return JSON format:
                 # Fall through to rule-based recommendation
         
         # Rule-based fallback recommendation
-        tops = list(garments.filter(category__name__icontains='top'))
-        bottoms = list(garments.filter(category__name__icontains='bottom'))
-        shoes = list(garments.filter(category__name__icontains='shoe'))
-        outerwear = list(garments.filter(category__name__icontains='outer'))
+        import random
+        
+        # Group garments by category
+        categories = {}
+        for g in garments:
+            cat_name = g.category.name if g.category else 'Uncategorized'
+            if cat_name not in categories:
+                categories[cat_name] = []
+            categories[cat_name].append(g)
         
         recommendations = {
             "outfits": []
         }
         
-        # Generate simple combinations
-        for i in range(min(3, len(tops))):
+        # Generate 3 outfit combinations, picking ONE item from each category
+        for i in range(3):
             outfit = {
                 "name": f"{theme.title()} Look {i+1}",
                 "garment_ids": [],
-                "reasoning": f"A versatile combination perfect for {theme}",
-                "style_tip": "Accessorize to personalize your look!"
+                "reasoning": f"A curated combination perfect for {theme}",
+                "style_tip": "Each outfit uses one item per category for a balanced look!"
             }
             
-            if i < len(tops):
-                outfit["garment_ids"].append(tops[i].id)
-            if i < len(bottoms):
-                outfit["garment_ids"].append(bottoms[i].id)
-            if i < len(shoes):
-                outfit["garment_ids"].append(shoes[i].id)
+            # Pick ONE random item from each category
+            for cat_name, items in categories.items():
+                if items:
+                    chosen = random.choice(items)
+                    outfit["garment_ids"].append(chosen.id)
             
             if outfit["garment_ids"]:
                 recommendations["outfits"].append(outfit)
