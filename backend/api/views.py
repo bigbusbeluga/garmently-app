@@ -272,12 +272,17 @@ Best regards,
 Garmently Team
         '''
         
+        # Try to send email with a shorter timeout
+        from django.core.mail import get_connection
+        connection = get_connection(timeout=10)  # 10 second timeout
+        
         send_mail(
             subject,
             message,
             settings.DEFAULT_FROM_EMAIL,
             [email],
             fail_silently=False,
+            connection=connection,
         )
         
         return Response({
@@ -287,9 +292,10 @@ Garmently Team
     
     except Exception as e:
         print(f"Error sending email: {str(e)}")
+        # Still save the code so user can try again or we can implement retry logic
         return Response({
-            'error': 'Failed to send verification email. Please try again.',
-            'detail': str(e)
+            'error': 'Email service temporarily unavailable. Please try again in a moment.',
+            'detail': str(e) if settings.DEBUG else 'Email sending failed'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])

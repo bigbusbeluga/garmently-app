@@ -1,2 +1,2 @@
 # Procfile for Railway/Heroku deployment
-web: python manage.py migrate && python manage.py collectstatic --noinput && python manage.py setup_categories && gunicorn garmently_backend.wsgi:application --bind 0.0.0.0:$PORT
+web: python manage.py migrate && python manage.py collectstatic --noinput && python manage.py setup_categories && gunicorn garmently_backend.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 2
