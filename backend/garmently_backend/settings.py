@@ -324,7 +324,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apikey'
 EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
-DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER', 'noreply@garmently.com')
+DEFAULT_FROM_EMAIL = 'garmently.supp@gmail.com'  # Use verified sender email
 EMAIL_TIMEOUT = 30
 
 # Verification code expiry (in minutes)
