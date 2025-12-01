@@ -205,6 +205,22 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
 
+# Accept additional dynamically generated preview domains (e.g. Vercel) and backend URLs.
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
+    r"^https://.*\.railway\.app$",
+]
+
+# Allow posting from trusted origins so CSRF checks pass on authenticated endpoints.
+CSRF_TRUSTED_ORIGINS = [
+    "https://garmently-app.vercel.app",
+    "https://garmently-app-git-main-bigbusbelugas-projects.vercel.app",
+    "https://garmently-app-production.up.railway.app",
+    "https://garmently-backend.up.railway.app",
+    "https://*.vercel.app",
+    "https://*.railway.app",
+]
+
 # Additional CORS headers for production
 CORS_ALLOW_METHODS = [
     'DELETE',

@@ -216,6 +216,14 @@ def mixmatch(request):
             .get('APP', {})
             .get('client_id')
         )
+        allowed_audiences = set()
+        if configured_client_id:
+            allowed_audiences.add(configured_client_id)
+        extra_audiences = os.getenv('GOOGLE_ALLOWED_AUDIENCES')
+        if extra_audiences:
+            allowed_audiences.update([
+                aud.strip() for aud in extra_audiences.split(',') if aud.strip()
+            ])
 
         # When the frontend provides an access token we can hit the standard userinfo endpoint.
         if access_token:
@@ -230,8 +238,14 @@ def mixmatch(request):
             user_info = google_response.json()
 
             audience = user_info.get('aud') or user_info.get('audience')
-            if configured_client_id and audience and audience != configured_client_id:
-                return Response({'error': 'Google credential does not match configured client'}, status=status.HTTP_400_BAD_REQUEST)
+            if allowed_audiences and audience and audience not in allowed_audiences:
+                return Response(
+                    {
+                        'error': 'Google credential does not match any allowed client',
+                        'detail': f'aud={audience}'
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
         else:
             try:
                 from google.oauth2 import id_token as google_id_token
@@ -246,7 +260,7 @@ def mixmatch(request):
                 id_info = google_id_token.verify_oauth2_token(
                     id_token,
                     google_auth_requests.Request(),
-                    configured_client_id or None
+                    None  # We validate the audience manually below to allow multiple IDs.
                 )
             except ValueError as exc:
                 return Response(
@@ -259,6 +273,16 @@ def mixmatch(request):
 
             if not id_info.get('email_verified', True):
                 return Response({'error': 'Google account email is not verified'}, status=status.HTTP_400_BAD_REQUEST)
+
+            audience = id_info.get('aud')
+            if allowed_audiences and audience not in allowed_audiences:
+                return Response(
+                    {
+                        'error': 'Google credential does not match any allowed client',
+                        'detail': f'aud={audience}'
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
             user_info = {
                 'email': id_info.get('email'),
