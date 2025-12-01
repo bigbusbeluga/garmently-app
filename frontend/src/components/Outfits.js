@@ -269,18 +269,7 @@ function Outfits() {
             <div className="modal-content">
               {/* Outfit Canvas - Visual Layout */}
               <div className="outfit-canvas">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <h3 style={{ margin: 0 }}>Outfit Layout</h3>
-                  {selectedOutfit.garments && selectedOutfit.garments.length > 0 && (
-                    <button 
-                      className="btn btn-primary"
-                      onClick={() => downloadOutfitImage(selectedOutfit)}
-                      style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
-                    >
-                      <i className="fas fa-download"></i> Download Outfit
-                    </button>
-                  )}
-                </div>
+                <h3>Outfit Layout</h3>
                 {selectedOutfit.garments && selectedOutfit.garments.length > 0 ? (
                   <div 
                     id={`outfit-canvas-${selectedOutfit.id}`}
@@ -367,7 +356,6 @@ function Outfits() {
                               <img 
                                 src={garment.image_url} 
                                 alt={garment.name}
-                                crossOrigin="anonymous"
                                 style={{ 
                                   width: '100%', 
                                   height: '100%', 
@@ -516,6 +504,36 @@ function Outfits() {
                   <i className="fas fa-trash"></i> Delete Outfit
                 </button>
               </div>
+              
+              {/* Download Button */}
+              {selectedOutfit.garments && selectedOutfit.garments.length > 0 && (
+                <div style={{ marginTop: '1rem', textAlign: 'center', paddingTop: '1rem', borderTop: '1px solid rgba(0,0,0,0.1)' }}>
+                  <button 
+                    onClick={() => downloadOutfitImage(selectedOutfit)}
+                    style={{
+                      background: 'transparent',
+                      border: '1px solid #6c757d',
+                      color: '#6c757d',
+                      padding: '0.5rem 1.5rem',
+                      borderRadius: '6px',
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseOver={(e) => {
+                      e.target.style.background = '#6c757d';
+                      e.target.style.color = 'white';
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.background = 'transparent';
+                      e.target.style.color = '#6c757d';
+                    }}
+                  >
+                    <i className="fas fa-download" style={{ marginRight: '0.5rem' }}></i>
+                    Download Outfit Image
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
