@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { apiService } from '../services/api';
+import SetPasswordModal from './SetPasswordModal';
 import './Profile.css';
 
 function Profile() {
@@ -22,6 +23,8 @@ function Profile() {
   });
   const [activeTab, setActiveTab] = useState('profile'); // 'profile' or 'password'
   const [previewImage, setPreviewImage] = useState(null);
+  const [showSetPassword, setShowSetPassword] = useState(false);
+  const [hasPassword, setHasPassword] = useState(true);
 
   useEffect(() => {
     document.title = 'Profile - Garmently';
@@ -42,6 +45,8 @@ function Profile() {
       if (data.profile_picture) {
         setPreviewImage(data.profile_picture);
       }
+      // Check if user has a password set
+      setHasPassword(data.has_usable_password);
     } catch (err) {
       console.error('Error fetching profile:', err);
     }
@@ -251,7 +256,27 @@ function Profile() {
         )}
 
         {activeTab === 'password' && (
-          <form onSubmit={handlePasswordSubmit} className="password-form">
+          <>
+            {!hasPassword ? (
+              <div className="no-password-section">
+                <div className="info-box">
+                  <i className="fas fa-info-circle"></i>
+                  <div>
+                    <h4>No Password Set</h4>
+                    <p>You signed up with Google and don't have a password yet. Set one now to enable email/password login.</p>
+                  </div>
+                </div>
+                <button 
+                  type="button" 
+                  className="btn btn-primary"
+                  onClick={() => setShowSetPassword(true)}
+                >
+                  <i className="fas fa-key"></i>
+                  Set Password
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handlePasswordSubmit} className="password-form">
             <div className="form-group">
               <label>Current Password *</label>
               <input 
@@ -293,8 +318,22 @@ function Profile() {
               )}
             </button>
           </form>
+            )}
+          </>
         )}
       </div>
+
+      {showSetPassword && (
+        <SetPasswordModal 
+          onClose={() => setShowSetPassword(false)} 
+          onSuccess={(message) => {
+            setShowSetPassword(false);
+            setMessage({ type: 'success', text: message });
+            setHasPassword(true);
+            setTimeout(() => setMessage(null), 3000);
+          }}
+        />
+      )}
     </div>
   );
 }

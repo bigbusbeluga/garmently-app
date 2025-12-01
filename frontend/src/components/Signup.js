@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { apiService } from '../services/api';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import SetPasswordModal from './SetPasswordModal';
 import './Auth.css';
 
 function Signup() {
@@ -21,6 +22,8 @@ function Signup() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
+  const [showSetPassword, setShowSetPassword] = useState(false);
+  const [googleUser, setGoogleUser] = useState(null);
 
   useEffect(() => {
     document.title = 'Sign Up - Garmently';
@@ -144,7 +147,14 @@ function Signup() {
     try {
       const response = await apiService.googleAuth(credentialResponse.credential);
       login(response.user, response.token);
-      navigate('/');
+      
+      // Check if user needs to set password (no usable password)
+      if (!response.user.has_usable_password) {
+        setGoogleUser(response.user);
+        setShowSetPassword(true);
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       setErrors({ general: err.response?.data?.error || 'Google sign-in failed. Please try again.' });
     } finally {
@@ -154,6 +164,18 @@ function Signup() {
 
   const handleGoogleError = () => {
     setErrors({ general: 'Google sign-in was unsuccessful. Please try again.' });
+  };
+
+  const handleSetPasswordSuccess = (message) => {
+    setShowSetPassword(false);
+    // Navigate to dashboard
+    navigate('/');
+  };
+
+  const handleSetPasswordSkip = () => {
+    setShowSetPassword(false);
+    // Navigate to dashboard anyway
+    navigate('/');
   };
 
   return (
@@ -429,6 +451,13 @@ function Signup() {
           </p>
         </div>
       </div>
+
+      {showSetPassword && (
+        <SetPasswordModal 
+          onClose={handleSetPasswordSkip} 
+          onSuccess={handleSetPasswordSuccess}
+        />
+      )}
     </div>
   );
 }

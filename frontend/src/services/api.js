@@ -188,6 +188,14 @@ export const apiService = {
     return response.data;
   },
 
+  setPassword: async (password, confirm_password) => {
+    if (USE_MOCK_DATA) {
+      return { message: 'Password set successfully' };
+    }
+    const response = await api.post('/api/auth/set-password/', { password, confirm_password });
+    return response.data;
+  },
+
   // Garments
   getGarments: async () => {
     if (USE_MOCK_DATA) {

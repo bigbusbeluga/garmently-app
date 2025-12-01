@@ -651,6 +651,48 @@ def current_user(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+def set_password(request):
+    """Set password for users who signed up with Google (or other OAuth)"""
+    user = request.user
+    new_password = request.data.get('password')
+    confirm_password = request.data.get('confirm_password')
+    
+    if not new_password or not confirm_password:
+        return Response(
+            {'error': 'Both password and confirm_password are required'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    if new_password != confirm_password:
+        return Response(
+            {'error': 'Passwords do not match'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    if len(new_password) < 8:
+        return Response(
+            {'error': 'Password must be at least 8 characters'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Check if user already has a usable password
+    if user.has_usable_password():
+        return Response(
+            {'error': 'You already have a password. Use change password instead.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    user.set_password(new_password)
+    user.save()
+    
+    print(f"Password set successfully for user: {user.username}")
+    return Response({
+        'message': 'Password set successfully! You can now log in with email and password.',
+        'has_password': True
+    })
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def change_password(request):
     """Change user password"""
     user = request.user
@@ -666,6 +708,12 @@ def change_password(request):
     if not user.check_password(old_password):
         return Response(
             {'error': 'Old password is incorrect'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    if len(new_password) < 8:
+        return Response(
+            {'error': 'New password must be at least 8 characters'},
             status=status.HTTP_400_BAD_REQUEST
         )
     

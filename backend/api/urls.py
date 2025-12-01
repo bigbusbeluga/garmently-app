@@ -21,6 +21,7 @@ api_urlpatterns = [
     path('api/auth/login/', views.login_view, name='api_login'),
     path('api/auth/logout/', views.logout_view, name='api_logout'),
     path('api/auth/user/', views.current_user, name='current_user'),
+    path('api/auth/set-password/', views.set_password, name='set_password'),
     path('api/auth/change-password/', views.change_password, name='change_password'),
     
     # AI Features
