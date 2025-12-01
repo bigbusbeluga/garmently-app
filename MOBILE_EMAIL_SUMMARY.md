@@ -137,7 +137,9 @@ verifyCode: async (email, code) => {
 4. Copy the 16-character password
 5. In Railway dashboard → Variables tab:
    - Add `EMAIL_HOST_USER` = your.email@gmail.com 
-   - Add `EMAIL_HOST_PASSWORD` = 16-character app password (no spaces) akzc sweh axwv rjac
+   - Add `EMAIL_HOST_PASSWORD` = 16-character app password (no spaces) 
+   akzc sweh axwv rjac
+   unca mtof wgnf ioor - garmently
 6. Railway will auto-redeploy
 
 **For Local Testing:**

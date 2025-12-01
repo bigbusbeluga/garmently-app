@@ -66,6 +66,12 @@ function Signup() {
     setErrors({});
     setLoading(true);
 
+    if (formData.verificationCode.length !== 6) {
+      setErrors({ verificationCode: 'Please enter the complete 6-digit code' });
+      setLoading(false);
+      return;
+    }
+
     try {
       await apiService.verifyCode(formData.email, formData.verificationCode);
       setStep(3);
@@ -230,7 +236,7 @@ function Signup() {
         {/* Step 2: Verification Code */}
         {step === 2 && (
           <form onSubmit={handleVerifyCode} className="auth-form">
-            <div className="info-message" style={{ backgroundColor: '#dbeafe', color: '#1e40af', padding: '0.75rem', borderRadius: '0.5rem', marginBottom: '1rem' }}>
+            <div className="info-message" style={{ backgroundColor: '#dbeafe', color: '#1e40af', padding: '0.75rem', borderRadius: '0.5rem', marginBottom: '1rem', fontSize: '0.9rem' }}>
               <i className="fas fa-info-circle"></i>
               We sent a 6-digit code to <strong>{formData.email}</strong>
             </div>
@@ -249,8 +255,10 @@ function Signup() {
                 required
                 placeholder="Enter 6-digit code"
                 maxLength="6"
+                minLength="6"
+                inputMode="numeric"
                 autoFocus
-                style={{ fontSize: '1.5rem', letterSpacing: '0.5rem', textAlign: 'center' }}
+                style={{ fontSize: '1rem', letterSpacing: '0.3rem', textAlign: 'center' }}
               />
               {errors.verificationCode && (
                 <span className="field-error">
