@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "export DJANGO_SETTINGS_MODULE=garmently_backend.settings_production && python manage.py migrate --run-syncdb && python manage.py collectstatic --noinput && python manage.py setup_categories && gunicorn garmently_backend.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --env DJANGO_SETTINGS_MODULE=garmently_backend.settings_production",
+    "startCommand": "export DJANGO_SETTINGS_MODULE=garmently_backend.settings_production && python manage.py migrate && python manage.py collectstatic --noinput && python manage.py setup_categories && gunicorn garmently_backend.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --env DJANGO_SETTINGS_MODULE=garmently_backend.settings_production",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
