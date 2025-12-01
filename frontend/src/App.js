@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -11,12 +11,17 @@ import MixMatch from './components/MixMatch';
 import Outfits from './components/Outfits';
 import Calendar from './components/Calendar';
 import Laundry from './components/Laundry';
+import Profile from './components/Profile';
+import Notifications from './components/Notifications';
 import './App.css';
 
 // Layout Component with Sidebar
 function Layout({ children }) {
   const location = useLocation();
   const { user, logout } = useAuth();
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [notificationCount, setNotificationCount] = useState(0);
   
   const isActive = (path) => {
     return location.pathname === path ? 'nav-link active' : 'nav-link';
@@ -27,6 +32,41 @@ function Layout({ children }) {
     window.location.href = '/login';
   };
 
+  // Update clock every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Check for notifications
+  useEffect(() => {
+    const checkNotifications = () => {
+      const scheduled = localStorage.getItem('scheduled_outfits');
+      if (!scheduled) return;
+      
+      const outfits = JSON.parse(scheduled);
+      const today = new Date().toISOString().split('T')[0];
+      let count = 0;
+      
+      if (outfits[today]) count++;
+      
+      for (let i = 1; i <= 3; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() + i);
+        const dateStr = date.toISOString().split('T')[0];
+        if (outfits[dateStr]) count++;
+      }
+      
+      setNotificationCount(count);
+    };
+    
+    checkNotifications();
+    const interval = setInterval(checkNotifications, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="app-container">
       {/* Top Navbar */}
@@ -36,13 +76,27 @@ function Layout({ children }) {
           Garmently
         </div>
         <div className="navbar-user">
-          <i className="fas fa-user"></i>
-          <span>{user?.username || 'User'}</span>
+          <button 
+            onClick={() => setShowNotifications(!showNotifications)} 
+            className="notification-btn" 
+            title="Notifications"
+          >
+            <i className="fas fa-bell"></i>
+            {notificationCount > 0 && (
+              <span className="notification-badge">{notificationCount}</span>
+            )}
+          </button>
+          <Link to="/profile" className="profile-link" title="Profile">
+            <i className="fas fa-user"></i>
+            <span>{user?.username || 'User'}</span>
+          </Link>
           <button onClick={handleLogout} className="logout-btn" title="Logout">
             <i className="fas fa-sign-out-alt"></i>
           </button>
         </div>
       </nav>
+
+      <Notifications isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
 
       <div className="app-layout">
         {/* Sidebar */}
@@ -91,7 +145,24 @@ function Layout({ children }) {
                 <span>Add Garment</span>
               </Link>
             </li>
+            <li>
+              <Link to="/profile" className={isActive('/profile')}>
+                <i className="fas fa-user-circle"></i>
+                <span>Profile</span>
+              </Link>
+            </li>
           </ul>
+          
+          {/* Clock in sidebar footer */}
+          <div className="sidebar-footer">
+            <div className="current-time">
+              <i className="fas fa-clock"></i>
+              <div className="time-display">
+                <div className="time">{currentTime.toLocaleTimeString()}</div>
+                <div className="date">{currentTime.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+              </div>
+            </div>
+          </div>
         </aside>
 
         {/* Main Content */}
@@ -157,6 +228,13 @@ function AppRoutes() {
         <ProtectedRoute>
           <Layout>
             <AddGarment />
+          </Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/profile" element={
+        <ProtectedRoute>
+          <Layout>
+            <Profile />
           </Layout>
         </ProtectedRoute>
       } />

@@ -125,9 +125,41 @@ export const apiService = {
 
   getCurrentUser: async () => {
     if (USE_MOCK_DATA) {
-      return { username: 'demo_user', email: 'demo@example.com' };
+      return { 
+        username: 'demo_user', 
+        email: 'demo@example.com',
+        first_name: 'Demo',
+        last_name: 'User',
+        bio: 'Fashion enthusiast',
+        profile_picture: null
+      };
     }
-    const response = await api.get('/auth/user/');
+    const response = await api.get('/api/auth/user/');
+    return response.data;
+  },
+
+  updateProfile: async (formData) => {
+    if (USE_MOCK_DATA) {
+      const updated = {};
+      for (let [key, value] of formData.entries()) {
+        updated[key] = value;
+      }
+      localStorage.setItem('user', JSON.stringify(updated));
+      return updated;
+    }
+    const response = await api.patch('/api/auth/user/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  changePassword: async (passwordData) => {
+    if (USE_MOCK_DATA) {
+      return { message: 'Password changed successfully' };
+    }
+    const response = await api.post('/api/auth/change-password/', passwordData);
     return response.data;
   },
 

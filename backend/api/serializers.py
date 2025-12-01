@@ -4,9 +4,21 @@ from .models import Category, Garment, Outfit, LaundryItem, WearHistory
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for User model"""
+    profile_picture = serializers.ImageField(required=False, allow_null=True)
+    bio = serializers.CharField(required=False, allow_blank=True, max_length=500)
+    
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'profile_picture', 'bio']
+        read_only_fields = ['id']
+    
+    def to_representation(self, instance):
+        """Add profile_picture and bio from profile if exists"""
+        data = super().to_representation(instance)
+        # Add empty fields for profile picture and bio (can be extended with Profile model)
+        data['profile_picture'] = None
+        data['bio'] = ''
+        return data
 
 class RegisterSerializer(serializers.ModelSerializer):
     """Serializer for user registration"""
