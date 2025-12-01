@@ -1,8 +1,7 @@
 /* eslint-disable no-restricted-globals */
 
 // Service Worker for Garmently PWA
-// Increment version number to force update: v1 -> v2 -> v3...
-const CACHE_NAME = 'garmently-v2';
+const CACHE_NAME = 'garmently-v1';
 const urlsToCache = [
   '/',
   '/static/css/main.css',
@@ -64,13 +63,6 @@ self.addEventListener('fetch', (event) => {
         return caches.match('/');
       })
   );
-});
-
-// Message event - handle skip waiting
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
 });
 
 // Activate event - clean up old caches

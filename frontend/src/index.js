@@ -12,28 +12,8 @@ root.render(
   </React.StrictMode>
 );
 
-// Register service worker for PWA functionality with update handling
-serviceWorkerRegistration.register({
-  onUpdate: (registration) => {
-    const waitingServiceWorker = registration.waiting;
-
-    if (waitingServiceWorker) {
-      waitingServiceWorker.addEventListener('statechange', (event) => {
-        if (event.target.state === 'activated') {
-          window.location.reload();
-        }
-      });
-      
-      // Notify user about update
-      if (window.confirm('New version available! Click OK to update.')) {
-        waitingServiceWorker.postMessage({ type: 'SKIP_WAITING' });
-      }
-    }
-  },
-  onSuccess: (registration) => {
-    console.log('Service worker registered successfully.');
-  }
-});
+// Register service worker for PWA functionality
+serviceWorkerRegistration.register();
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
