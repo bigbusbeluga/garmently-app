@@ -17,10 +17,10 @@ DEBUG = False
 
 # Add your production domain here
 ALLOWED_HOSTS = [
-    'garmently-backend.herokuapp.com',  # Replace with your actual Heroku app name
+    'garmently-app-production.up.railway.app',  # Replace with your actual Heroku app name
     'your-domain.com',
     'www.your-domain.com', 
-    'your-app.vercel.app',     # If using Vercel for frontend
+    'garmently-app.vercel.app',     # If using Vercel for frontend
     'localhost',               # For local testing
     '127.0.0.1',              # For local testing
     '.railway.app',           # Allow all Railway subdomains
@@ -122,11 +122,11 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'your-production-secret-key-here')
 # Production email settings - REQUIRED for email verification
 # Use custom backend to force IPv4 (fixes "Network is unreachable" on Railway)
 EMAIL_BACKEND = 'garmently_backend.email_backend.EmailBackendIPv4'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 465
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True
-EMAIL_TIMEOUT = 20
+EMAIL_HOST = 'smtp.googlemail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_TIMEOUT = 30
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER', 'noreply@garmently.com')
