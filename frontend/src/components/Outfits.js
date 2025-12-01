@@ -7,6 +7,7 @@ function Outfits() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedOutfit, setSelectedOutfit] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     document.title = 'Outfits - Garmently';
@@ -35,11 +36,22 @@ function Outfits() {
       setOutfits(outfits.filter(o => o.id !== outfitId));
       if (selectedOutfit?.id === outfitId) {
         setSelectedOutfit(null);
+        setShowModal(false);
       }
     } catch (err) {
       console.error('Error deleting outfit:', err);
       alert('Failed to delete outfit');
     }
+  };
+
+  const openOutfitModal = (outfit) => {
+    setSelectedOutfit(outfit);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedOutfit(null);
   };
 
   const toggleFavorite = async (outfit) => {
@@ -96,8 +108,8 @@ function Outfits() {
               {outfits.map((outfit) => (
                 <div
                   key={outfit.id}
-                  className={`outfit-card ${selectedOutfit?.id === outfit.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedOutfit(outfit)}
+                  className={`outfit-card`}
+                  onClick={() => openOutfitModal(outfit)}
                 >
                   <div className="outfit-images">
                     {outfit.garments && outfit.garments.length > 0 ? (
@@ -177,74 +189,123 @@ function Outfits() {
             </div>
           )}
         </div>
+      </div>
 
-        {/* Outfit Detail Panel */}
-        {selectedOutfit && (
-          <div className="outfit-detail-panel">
-            <div className="panel-header">
+      {/* Outfit Detail Modal */}
+      {showModal && selectedOutfit && (
+        <div className="outfit-modal-overlay" onClick={closeModal}>
+          <div className="outfit-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
               <h2>{selectedOutfit.name}</h2>
-              <button
-                className="close-btn"
-                onClick={() => setSelectedOutfit(null)}
-              >
+              <button className="close-btn" onClick={closeModal}>
                 <i className="fas fa-times"></i>
               </button>
             </div>
 
-            <div className="panel-content">
-              {selectedOutfit.occasion && (
-                <div className="detail-item">
-                  <label>Occasion:</label>
-                  <span className="occasion-badge">{selectedOutfit.occasion}</span>
-                </div>
-              )}
-
-              {selectedOutfit.season && (
-                <div className="detail-item">
-                  <label>Season:</label>
-                  <span>{selectedOutfit.season}</span>
-                </div>
-              )}
-
-              {selectedOutfit.notes && (
-                <div className="detail-item">
-                  <label>Notes:</label>
-                  <p className="notes-text">{selectedOutfit.notes}</p>
-                </div>
-              )}
-
-              <div className="detail-item">
-                <label>Garments ({selectedOutfit.garments?.length || 0}):</label>
-                <div className="garments-list">
-                  {selectedOutfit.garments && selectedOutfit.garments.map((garment) => (
-                    <div key={garment.id} className="garment-detail-item">
+            <div className="modal-content">
+              {/* Outfit Canvas - Visual Layout */}
+              <div className="outfit-canvas">
+                <h3>Outfit Layout</h3>
+                <div className="canvas-grid">
+                  {selectedOutfit.garments && selectedOutfit.garments.map((garment, index) => (
+                    <div key={garment.id} className="canvas-item">
                       {garment.image_url ? (
                         <img src={garment.image_url} alt={garment.name} />
                       ) : (
-                        <div className="garment-placeholder-small">
+                        <div className="canvas-placeholder">
                           <i className="fas fa-tshirt"></i>
                         </div>
                       )}
-                      <div className="garment-detail-info">
-                        <p className="garment-detail-name">{garment.name}</p>
-                        <p className="garment-detail-meta">
-                          {garment.category_name} • {garment.color}
-                        </p>
-                      </div>
+                      <div className="canvas-item-label">{garment.name}</div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="panel-actions">
-                <button className="btn btn-primary btn-block">
+              {/* Outfit Details */}
+              <div className="outfit-details-section">
+                {selectedOutfit.occasion && (
+                  <div className="detail-row">
+                    <label><i className="fas fa-tag"></i> Occasion:</label>
+                    <span className="occasion-badge">{selectedOutfit.occasion}</span>
+                  </div>
+                )}
+
+                {selectedOutfit.season && (
+                  <div className="detail-row">
+                    <label><i className="fas fa-sun"></i> Season:</label>
+                    <span>{selectedOutfit.season}</span>
+                  </div>
+                )}
+
+                {selectedOutfit.times_worn > 0 && (
+                  <div className="detail-row">
+                    <label><i className="fas fa-calendar"></i> Times Worn:</label>
+                    <span>{selectedOutfit.times_worn}</span>
+                  </div>
+                )}
+
+                {selectedOutfit.notes && (
+                  <div className="detail-row">
+                    <label><i className="fas fa-sticky-note"></i> Description:</label>
+                    <p className="notes-text">{selectedOutfit.notes}</p>
+                  </div>
+                )}
+
+                {/* Garments List */}
+                <div className="detail-row">
+                  <label><i className="fas fa-list"></i> Items ({selectedOutfit.garments?.length || 0}):</label>
+                  <div className="garments-list-modal">
+                    {selectedOutfit.garments && selectedOutfit.garments.map((garment) => (
+                      <div key={garment.id} className="garment-item-modal">
+                        {garment.image_url ? (
+                          <img src={garment.image_url} alt={garment.name} />
+                        ) : (
+                          <div className="garment-thumb-placeholder">
+                            <i className="fas fa-tshirt"></i>
+                          </div>
+                        )}
+                        <div className="garment-item-info">
+                          <p className="garment-item-name">{garment.name}</p>
+                          <p className="garment-item-meta">
+                            {garment.category_name} • {garment.color}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Actions */}
+              <div className="modal-actions">
+                <button 
+                  className="btn btn-favorite"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavorite(selectedOutfit);
+                  }}
+                >
+                  <i className={`fas fa-heart ${selectedOutfit.is_favorite ? '' : 'far'}`}></i>
+                  {selectedOutfit.is_favorite ? ' Remove from Favorites' : ' Add to Favorites'}
+                </button>
+                <button className="btn btn-primary">
                   <i className="fas fa-check"></i> Mark as Worn
+                </button>
+                <button 
+                  className="btn btn-danger"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteOutfit(selectedOutfit.id);
+                  }}
+                >
+                  <i className="fas fa-trash"></i> Delete Outfit
                 </button>
               </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

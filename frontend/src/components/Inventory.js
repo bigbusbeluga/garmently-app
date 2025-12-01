@@ -34,6 +34,31 @@ function Inventory() {
     }
   };
 
+  const handleDelete = async (itemId) => {
+    if (!window.confirm('Are you sure you want to delete this garment?')) {
+      return;
+    }
+
+    try {
+      await apiService.deleteGarment(itemId);
+      setItems(items.filter(item => item.id !== itemId));
+    } catch (err) {
+      console.error('Error deleting garment:', err);
+      alert('Failed to delete garment. Please try again.');
+    }
+  };
+
+  const handleWear = async (itemId) => {
+    try {
+      await apiService.wearGarment(itemId);
+      // Refresh items to show updated wear count
+      fetchItems();
+    } catch (err) {
+      console.error('Error marking garment as worn:', err);
+      alert('Failed to mark as worn. Please try again.');
+    }
+  };
+
   const fetchCategories = async () => {
     try {
       const data = await apiService.getCategories();
@@ -181,13 +206,21 @@ function Inventory() {
                   </div>
                   
                   <div className="garment-actions">
-                    <button className="btn-action btn-edit">
+                    <button className="btn-action btn-edit" title="Edit garment">
                       <i className="fas fa-edit"></i>
                     </button>
-                    <button className="btn-action btn-wear">
+                    <button 
+                      className="btn-action btn-wear"
+                      onClick={() => handleWear(item.id)}
+                      title="Mark as worn"
+                    >
                       <i className="fas fa-check"></i> Wear
                     </button>
-                    <button className="btn-action btn-delete">
+                    <button 
+                      className="btn-action btn-delete"
+                      onClick={() => handleDelete(item.id)}
+                      title="Delete garment"
+                    >
                       <i className="fas fa-trash"></i>
                     </button>
                   </div>

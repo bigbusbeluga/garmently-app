@@ -433,6 +433,304 @@
   color: #dc3545;
 }
 
+/* Outfit Modal */
+.outfit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.outfit-modal {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: #2d3748;
+}
+
+.modal-header .close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #718096;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.modal-header .close-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #2d3748;
+}
+
+.modal-content {
+  padding: 2rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Outfit Canvas */
+.outfit-canvas {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.outfit-canvas h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  color: #2d3748;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.canvas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.canvas-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s;
+}
+
+.canvas-item:hover {
+  transform: scale(1.05);
+}
+
+.canvas-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.canvas-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9ecef;
+  color: #6c757d;
+  font-size: 2rem;
+}
+
+.canvas-item-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  color: white;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Outfit Details Section */
+.outfit-details-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detail-row label {
+  font-weight: 600;
+  color: #4a5568;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.detail-row label i {
+  color: #718096;
+}
+
+.notes-text {
+  margin: 0;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #2d3748;
+  line-height: 1.6;
+}
+
+.occasion-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: rgba(74, 85, 104, 0.1);
+  color: #2d3748;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Garments List in Modal */
+.garments-list-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.garment-item-modal {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: all 0.2s;
+}
+
+.garment-item-modal:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateX(4px);
+}
+
+.garment-item-modal img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.garment-thumb-placeholder {
+  width: 60px;
+  height: 60px;
+  background: #e9ecef;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  font-size: 1.5rem;
+}
+
+.garment-item-info {
+  flex: 1;
+}
+
+.garment-item-name {
+  margin: 0 0 0.25rem 0;
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.95rem;
+}
+
+.garment-item-meta {
+  margin: 0;
+  color: #718096;
+  font-size: 0.85rem;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin-top: 1.5rem;
+}
+
+.modal-actions .btn {
+  flex: 1;
+  padding: 0.875rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.modal-actions .btn-favorite {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #e53e3e;
+}
+
+.modal-actions .btn-favorite:hover {
+  background: rgba(229, 62, 62, 0.1);
+  border-color: #e53e3e;
+}
+
+.modal-actions .btn-primary {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #2d3748;
+}
+
+.modal-actions .btn-primary:hover {
+  background: rgba(74, 85, 104, 0.1);
+  border-color: #4a5568;
+}
+
+.modal-actions .btn-danger {
+  background: rgba(229, 62, 62, 0.1);
+  border: 1px solid #e53e3e;
+  color: #e53e3e;
+}
+
+.modal-actions .btn-danger:hover {
+  background: #e53e3e;
+  color: white;
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
   .outfit-detail-panel {
@@ -447,14 +745,30 @@
 @media (max-width: 768px) {
   .outfits-content {
     flex-direction: column;
-  }
-  
-  .outfit-detail-panel {
-    width: 100%;
-    max-height: 50vh;
+    padding: 1rem;
   }
   
   .outfits-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  .outfit-modal-overlay {
+    padding: 1rem;
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+  }
+
+  .canvas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .modal-actions .btn {
+    width: 100%;
   }
 }
