@@ -17,13 +17,33 @@ function Outfits() {
   const fetchOutfits = async () => {
     try {
       const data = await apiService.getOutfits();
-      console.log('Fetched outfits:', data);
+      console.log('=== OUTFITS FETCH DEBUG ===');
+      console.log('Total outfits:', data.length);
+      console.log('Full outfits data:', JSON.stringify(data, null, 2));
+      
       if (data.length > 0) {
-        console.log('First outfit garments:', data[0].garments);
-        if (data[0].garments && data[0].garments.length > 0) {
-          console.log('First garment image_url:', data[0].garments[0].image_url);
-        }
+        data.forEach((outfit, index) => {
+          console.log(`\nOutfit ${index + 1} (${outfit.name}):`);
+          console.log('  - ID:', outfit.id);
+          console.log('  - Garments array:', outfit.garments);
+          console.log('  - Garments count:', outfit.garments?.length || 0);
+          
+          if (outfit.garments && outfit.garments.length > 0) {
+            outfit.garments.forEach((garment, gIndex) => {
+              console.log(`    Garment ${gIndex + 1}:`, {
+                id: garment.id,
+                name: garment.name,
+                image_url: garment.image_url,
+                has_image: !!garment.image_url
+              });
+            });
+          } else {
+            console.warn(`  ⚠️ Outfit "${outfit.name}" has NO garments!`);
+          }
+        });
       }
+      console.log('=== END DEBUG ===\n');
+      
       setOutfits(data);
       setLoading(false);
     } catch (err) {
@@ -213,37 +233,50 @@ function Outfits() {
               {/* Outfit Canvas - Visual Layout */}
               <div className="outfit-canvas">
                 <h3>Outfit Layout</h3>
-                <div className="canvas-grid">
-                  {selectedOutfit.garments && selectedOutfit.garments.map((garment, index) => {
-                    console.log('Canvas garment:', garment.name, 'image_url:', garment.image_url);
-                    return (
-                      <div key={garment.id} className="canvas-item">
-                        {garment.image_url ? (
-                          <img 
-                            src={garment.image_url} 
-                            alt={garment.name}
-                            onError={(e) => {
-                              console.error('Failed to load image:', garment.image_url);
-                              e.target.style.display = 'none';
-                              e.target.nextSibling.style.display = 'flex';
-                            }}
-                          />
-                        ) : (
-                          <div className="canvas-placeholder">
+                {selectedOutfit.garments && selectedOutfit.garments.length > 0 ? (
+                  <div className="canvas-grid">
+                    {selectedOutfit.garments.map((garment, index) => {
+                      console.log(`Canvas render - Garment ${index + 1}:`, {
+                        name: garment.name,
+                        image_url: garment.image_url,
+                        has_image: !!garment.image_url
+                      });
+                      return (
+                        <div key={garment.id} className="canvas-item">
+                          {garment.image_url ? (
+                            <img 
+                              src={garment.image_url} 
+                              alt={garment.name}
+                              onLoad={() => console.log('✅ Image loaded:', garment.image_url)}
+                              onError={(e) => {
+                                console.error('❌ Failed to load image:', garment.image_url);
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.style.display = 'flex';
+                              }}
+                            />
+                          ) : (
+                            <div className="canvas-placeholder">
+                              <i className="fas fa-tshirt"></i>
+                            </div>
+                          )}
+                          <div 
+                            className="canvas-placeholder" 
+                            style={{ display: garment.image_url ? 'none' : 'flex' }}
+                          >
                             <i className="fas fa-tshirt"></i>
                           </div>
-                        )}
-                        <div 
-                          className="canvas-placeholder" 
-                          style={{ display: garment.image_url ? 'none' : 'flex' }}
-                        >
-                          <i className="fas fa-tshirt"></i>
+                          <div className="canvas-item-label">{garment.name}</div>
                         </div>
-                        <div className="canvas-item-label">{garment.name}</div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="empty-canvas">
+                    <i className="fas fa-inbox fa-3x"></i>
+                    <p>This outfit has no garments</p>
+                    <small>Outfits created must contain at least one garment</small>
+                  </div>
+                )}
               </div>
 
               {/* Outfit Details */}
