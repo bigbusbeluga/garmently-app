@@ -1,0 +1,335 @@
+.laundry-page {
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.laundry-header {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: #2d3748;
+  text-align: center;
+}
+
+.laundry-header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+}
+
+.laundry-header p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* Statistics */
+.laundry-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 2px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card i {
+  font-size: 2.5rem;
+}
+
+.stat-card.dirty i {
+  color: #f56565;
+}
+
+.stat-card.washing i {
+  color: #4299e1;
+}
+
+.stat-card.clean i {
+  color: #48bb78;
+}
+
+.stat-info h3 {
+  margin: 0;
+  font-size: 2rem;
+  color: #2d3748;
+}
+
+.stat-info p {
+  margin: 0;
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+/* Tabs */
+.laundry-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 0.5rem;
+  border-radius: 12px;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  color: #718096;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.tab:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.tab.active {
+  background: white;
+  color: #2d3748;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Content */
+.laundry-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.laundry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.laundry-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  border: 2px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+}
+
+.laundry-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+}
+
+.laundry-card-image {
+  width: 100%;
+  height: 200px;
+  background: #f7fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.laundry-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.laundry-card-image .placeholder {
+  font-size: 3rem;
+  color: #cbd5e0;
+}
+
+.laundry-card-content {
+  padding: 1.25rem;
+}
+
+.laundry-card-content h3 {
+  margin: 0 0 0.75rem 0;
+  color: #2d3748;
+  font-size: 1.1rem;
+}
+
+.garment-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.garment-details span {
+  font-size: 0.85rem;
+  color: #718096;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.garment-details i {
+  font-size: 0.8rem;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.status-badge i {
+  font-size: 0.9rem;
+}
+
+.status-badge.status-clean {
+  background: #f0fff4;
+  color: #22543d;
+}
+
+.status-badge.status-dirty {
+  background: #fff5f5;
+  color: #742a2a;
+}
+
+.status-badge.status-washing {
+  background: #ebf8ff;
+  color: #2c5282;
+}
+
+.status-badge.status-damaged {
+  background: #fffaf0;
+  color: #7c2d12;
+}
+
+/* Actions */
+.laundry-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-sm:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary {
+  background: #4299e1;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #3182ce;
+}
+
+.btn-success {
+  background: #48bb78;
+  color: white;
+}
+
+.btn-success:hover {
+  background: #38a169;
+}
+
+.btn-warning {
+  background: #ed8936;
+  color: white;
+}
+
+.btn-warning:hover {
+  background: #dd6b20;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #718096;
+}
+
+.empty-state i {
+  color: #cbd5e0;
+  margin-bottom: 1rem;
+}
+
+.empty-state h2 {
+  margin: 1rem 0 0.5rem 0;
+  color: #2d3748;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.loading-content h1 {
+  color: #718096;
+  font-size: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .laundry-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .laundry-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .laundry-tabs {
+    flex-direction: column;
+  }
+
+  .laundry-card-image {
+    height: 150px;
+  }
+}

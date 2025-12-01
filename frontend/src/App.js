@@ -10,6 +10,7 @@ import AddGarment from './components/AddGarment';
 import MixMatch from './components/MixMatch';
 import Outfits from './components/Outfits';
 import Calendar from './components/Calendar';
+import Laundry from './components/Laundry';
 import './App.css';
 
 // Layout Component with Sidebar
@@ -101,19 +102,6 @@ function Layout({ children }) {
     </div>
   );
 }
-
-// Placeholder components for other pages
-function Laundry() {
-  return (
-    <div className="page-placeholder">
-      <i className="fas fa-soap fa-4x"></i>
-      <h2>Laundry</h2>
-      <p>Track items that need washing</p>
-    </div>
-  );
-}
-
-
 
 function AppRoutes() {
   return (
