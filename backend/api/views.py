@@ -272,47 +272,21 @@ Best regards,
 Garmently Team
         '''
         
-        # Try to send email with retries for Railway's network
-        from django.core.mail import get_connection
-        import time
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
         
-        max_retries = 3
-        retry_delay = 2  # seconds
-        last_error = None
-        
-        for attempt in range(max_retries):
-            try:
-                connection = get_connection(timeout=30)
-                connection.open()
-                
-                send_mail(
-                    subject,
-                    message,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [email],
-                    fail_silently=False,
-                    connection=connection,
-                )
-                
-                connection.close()
-                
-                return Response({
-                    'message': 'Verification code sent successfully',
-                    'email': email
-                }, status=status.HTTP_200_OK)
-                
-            except Exception as retry_error:
-                last_error = retry_error
-                print(f"Email attempt {attempt + 1} failed: {str(retry_error)}")
-                if attempt < max_retries - 1:
-                    time.sleep(retry_delay)
-                continue
-        
-        # All retries failed
-        raise last_error
+        return Response({
+            'message': 'Verification code sent successfully',
+            'email': email
+        }, status=status.HTTP_200_OK)
     
     except Exception as e:
-        print(f"Error sending email after all retries: {str(e)}")
+        print(f"Error sending email: {str(e)}")
         # Still save the code so user can try again or we can implement retry logic
         return Response({
             'error': 'Email service temporarily unavailable. Please try again in a moment.',
