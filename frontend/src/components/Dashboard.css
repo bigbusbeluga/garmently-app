@@ -292,6 +292,22 @@
   color: #667eea;
 }
 
+.weather-widget.error-widget {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  font-size: 1rem;
+  color: #f56565;
+  background: #fff5f5;
+  border: 1px solid #feb2b2;
+}
+
+.weather-widget.error-widget i {
+  font-size: 1.25rem;
+}
+
 .weather-main {
   display: grid;
   grid-template-columns: 1fr 1fr;

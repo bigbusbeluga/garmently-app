@@ -20,6 +20,7 @@ function Dashboard() {
     document.title = 'Dashboard - Garmently';
     fetchDashboardData();
     fetchWeather();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchWeather = async () => {
@@ -60,40 +61,40 @@ function Dashboard() {
       console.log('Weather API URL:', url);
       
       const response = await fetch(url);
-      const data = await response.json();
       
-      console.log('Weather API response:', data);
-      console.log('Response status:', response.status);
-      
-      if (response.ok) {
-        const weatherData = {
-          temp: Math.round(data.main.temp),
-          feels_like: Math.round(data.main.feels_like),
-          description: data.weather[0].description,
-          icon: data.weather[0].icon,
-          humidity: data.main.humidity,
-          city: data.name,
-          country: data.sys.country
-        };
-        console.log('Setting weather data:', weatherData);
-        setWeather(weatherData);
-      } else {
+      if (!response.ok) {
+        const errorData = await response.json();
         console.error('Weather API error - Status:', response.status);
-        console.error('Error details:', data);
-        setLocationError(`Weather service unavailable: ${data.message || 'API key may be invalid'}`);
+        console.error('Error details:', errorData);
+        setLocationError(`Weather service error: ${errorData.message || 'Unable to fetch weather'}`);
+        setWeatherLoading(false);
+        return;
       }
+      
+      const data = await response.json();
+      console.log('Weather API response:', data);
+      
+      const weatherData = {
+        temp: Math.round(data.main.temp),
+        feels_like: Math.round(data.main.feels_like),
+        description: data.weather[0].description,
+        icon: data.weather[0].icon,
+        humidity: data.main.humidity,
+        city: data.name,
+        country: data.sys.country
+      };
+      console.log('Setting weather data:', weatherData);
+      setWeather(weatherData);
+      setWeatherLoading(false);
     } catch (error) {
       console.error('Error fetching weather:', error);
-      setLocationError('Unable to fetch weather data');
-    } finally {
-      console.log('Weather loading complete');
+      setLocationError('Unable to fetch weather data. Please check your internet connection.');
       setWeatherLoading(false);
     }
   };
 
   const getOutfitSuggestion = (temp, description) => {
-    const desc = description.toLowerCase();
-    
+    // Use temperature to determine outfit suggestion
     if (temp >= 30) {
       return {
         suggestion: 'Light & Breathable',
@@ -215,6 +216,13 @@ function Dashboard() {
       {weatherLoading && (
         <div className="weather-widget loading-widget">
           <i className="fas fa-spinner fa-spin"></i> Loading weather...
+        </div>
+      )}
+
+      {!weatherLoading && !weather && locationError && (
+        <div className="weather-widget error-widget">
+          <i className="fas fa-exclamation-triangle"></i>
+          <div>{locationError}</div>
         </div>
       )}
 
