@@ -12,11 +12,110 @@ function Dashboard() {
   });
   const [recentGarments, setRecentGarments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [weather, setWeather] = useState(null);
+  const [weatherLoading, setWeatherLoading] = useState(true);
+  const [locationError, setLocationError] = useState(null);
 
   useEffect(() => {
     document.title = 'Dashboard - Garmently';
     fetchDashboardData();
+    fetchWeather();
   }, []);
+
+  const fetchWeather = async () => {
+    try {
+      // Get user's location
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords;
+            await getWeatherData(latitude, longitude);
+          },
+          (error) => {
+            console.error('Location error:', error);
+            setLocationError('Location access denied. Using default location.');
+            // Fallback to a default location (Manila, Philippines)
+            getWeatherData(14.5995, 120.9842);
+          }
+        );
+      } else {
+        setLocationError('Geolocation not supported. Using default location.');
+        getWeatherData(14.5995, 120.9842);
+      }
+    } catch (error) {
+      console.error('Weather fetch error:', error);
+      setWeatherLoading(false);
+    }
+  };
+
+  const getWeatherData = async (lat, lon) => {
+    try {
+      const API_KEY = 'bac89a4fa88db130ba93790817e208b8'; // OpenWeatherMap API key
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
+      );
+      const data = await response.json();
+      
+      if (response.ok) {
+        setWeather({
+          temp: Math.round(data.main.temp),
+          feels_like: Math.round(data.main.feels_like),
+          description: data.weather[0].description,
+          icon: data.weather[0].icon,
+          humidity: data.main.humidity,
+          city: data.name,
+          country: data.sys.country
+        });
+      } else {
+        console.error('Weather API error:', data);
+      }
+    } catch (error) {
+      console.error('Error fetching weather:', error);
+    } finally {
+      setWeatherLoading(false);
+    }
+  };
+
+  const getOutfitSuggestion = (temp, description) => {
+    const desc = description.toLowerCase();
+    
+    if (temp >= 30) {
+      return {
+        suggestion: 'Light & Breathable',
+        items: ['Tank tops', 'Shorts', 'Sundress', 'Sandals'],
+        icon: 'fa-sun',
+        color: '#f59e0b'
+      };
+    } else if (temp >= 25) {
+      return {
+        suggestion: 'Casual & Comfortable',
+        items: ['T-shirts', 'Light pants', 'Sneakers'],
+        icon: 'fa-cloud-sun',
+        color: '#10b981'
+      };
+    } else if (temp >= 20) {
+      return {
+        suggestion: 'Layer Up',
+        items: ['Long sleeves', 'Jeans', 'Light jacket'],
+        icon: 'fa-cloud',
+        color: '#3b82f6'
+      };
+    } else if (temp >= 15) {
+      return {
+        suggestion: 'Warm Layers',
+        items: ['Sweater', 'Jacket', 'Closed shoes'],
+        icon: 'fa-wind',
+        color: '#6366f1'
+      };
+    } else {
+      return {
+        suggestion: 'Bundle Up!',
+        items: ['Heavy jacket', 'Scarf', 'Gloves', 'Boots'],
+        icon: 'fa-snowflake',
+        color: '#8b5cf6'
+      };
+    }
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -53,6 +152,56 @@ function Dashboard() {
       <div className="dashboard-header">
         <h1><i className="fas fa-tachometer-alt"></i> Dashboard</h1>
       </div>
+
+      {/* Weather Widget */}
+      {!weatherLoading && weather && (
+        <div className="weather-widget">
+          <div className="weather-main">
+            <div className="weather-info">
+              <div className="weather-icon-section">
+                <img 
+                  src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
+                  alt={weather.description}
+                  className="weather-icon-img"
+                />
+              </div>
+              <div className="weather-details">
+                <div className="weather-location">
+                  <i className="fas fa-map-marker-alt"></i>
+                  {weather.city}, {weather.country}
+                </div>
+                <div className="weather-temp">{weather.temp}°C</div>
+                <div className="weather-desc">{weather.description}</div>
+                <div className="weather-meta">
+                  <span><i className="fas fa-temperature-high"></i> Feels like {weather.feels_like}°C</span>
+                  <span><i className="fas fa-tint"></i> {weather.humidity}% humidity</span>
+                </div>
+              </div>
+            </div>
+            <div className="outfit-suggestion">
+              <div className="suggestion-header">
+                <i className={`fas ${getOutfitSuggestion(weather.temp, weather.description).icon}`} 
+                   style={{ color: getOutfitSuggestion(weather.temp, weather.description).color }}></i>
+                <h3>Today's Outfit Suggestion</h3>
+              </div>
+              <div className="suggestion-title">
+                {getOutfitSuggestion(weather.temp, weather.description).suggestion}
+              </div>
+              <div className="suggestion-items">
+                {getOutfitSuggestion(weather.temp, weather.description).items.map((item, index) => (
+                  <span key={index} className="suggestion-tag">{item}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {weatherLoading && (
+        <div className="weather-widget loading-widget">
+          <i className="fas fa-spinner fa-spin"></i> Loading weather...
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div className="stats-grid">
