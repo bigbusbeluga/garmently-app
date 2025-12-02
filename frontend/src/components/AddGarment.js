@@ -25,6 +25,10 @@ function AddGarment() {
   const [error, setError] = useState(null);
   const [removingBg, setRemovingBg] = useState(false);
   const [originalImage, setOriginalImage] = useState(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const [stream, setStream] = useState(null);
+  const videoRef = React.useRef(null);
+  const canvasRef = React.useRef(null);
 
   useEffect(() => {
     document.title = 'Add Garment - Garmently';
@@ -81,6 +85,61 @@ function AddGarment() {
       reader.readAsDataURL(file);
     }
   };
+
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+      });
+      setStream(mediaStream);
+      setShowCamera(true);
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+      }
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+      setError('Unable to access camera. Please make sure you have granted camera permissions.');
+    }
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    setShowCamera(false);
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext('2d');
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      canvas.toBlob((blob) => {
+        const file = new File([blob], 'camera-photo.jpg', { type: 'image/jpeg' });
+        setOriginalImage(file);
+        setFormData(prev => ({
+          ...prev,
+          image: file
+        }));
+        setImagePreview(canvas.toDataURL('image/jpeg'));
+        stopCamera();
+      }, 'image/jpeg', 0.95);
+    }
+  };
+
+  // Cleanup camera on unmount
+  useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [stream]);
 
   const removeBackground = async () => {
     if (!originalImage) return;
@@ -422,15 +481,32 @@ function AddGarment() {
 
           <div className="form-group">
             <label htmlFor="image">Image</label>
-            <input
-              type="file"
-              id="image"
-              name="image"
-              onChange={handleImageChange}
-              accept="image/*"
-            />
+            <div className="image-input-buttons">
+              <input
+                type="file"
+                id="image"
+                name="image"
+                onChange={handleImageChange}
+                accept="image/*"
+                style={{ display: 'none' }}
+              />
+              <button
+                type="button"
+                className="btn btn-sm btn-secondary"
+                onClick={() => document.getElementById('image').click()}
+              >
+                <i className="fas fa-upload"></i> Choose File
+              </button>
+              <button
+                type="button"
+                className="btn btn-sm btn-secondary"
+                onClick={startCamera}
+              >
+                <i className="fas fa-camera"></i> Take Photo
+              </button>
+            </div>
             <small className="form-text">
-              Upload a photo of your garment. For best results with background removal, use images with solid/light backgrounds.
+              Upload or capture a photo of your garment. For best results with background removal, use images with solid/light backgrounds.
             </small>
             {imagePreview && (
               <div className="image-preview-container">
@@ -493,6 +569,29 @@ function AddGarment() {
           </div>
         </form>
       </div>
+
+      {/* Camera Modal */}
+      {showCamera && (
+        <div className="camera-modal">
+          <div className="camera-container">
+            <div className="camera-header">
+              <h3>Take a Photo</h3>
+              <button className="close-camera" onClick={stopCamera}>
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+            <div className="camera-view">
+              <video ref={videoRef} autoPlay playsInline></video>
+              <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
+            </div>
+            <div className="camera-controls">
+              <button className="btn btn-primary capture-btn" onClick={capturePhoto}>
+                <i className="fas fa-camera"></i> Capture
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
