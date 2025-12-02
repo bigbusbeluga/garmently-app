@@ -25,6 +25,9 @@ api_urlpatterns = [
     path('api/auth/change-password/', views.change_password, name='change_password'),
     path('api/auth/delete-account/', views.delete_account, name='delete_account'),
     
+    # Firebase Cloud Messaging
+    path('api/save-fcm-token/', views.save_fcm_token, name='save_fcm_token'),
+    
     # AI Features
     path('api/ai/outfit-recommendations/', views.ai_outfit_recommendation, name='ai_outfit_recommendation'),
     

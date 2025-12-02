@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "tailwindcss": "^4.1.17"
+  },
+  "dependencies": {
+    "firebase": "^12.6.0"
   }
 }

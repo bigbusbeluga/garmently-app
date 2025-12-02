@@ -14,6 +14,7 @@ import Laundry from './components/Laundry';
 import Profile from './components/Profile';
 import Notifications from './components/Notifications';
 import InstallPrompt from './components/InstallPrompt';
+import NotificationPrompt from './components/NotificationPrompt';
 import About from './components/About';
 import GetHelp from './components/GetHelp';
 import './App.css';
@@ -334,6 +335,7 @@ function App() {
       <AuthProvider>
         <AppRoutes />
         <InstallPrompt />
+        <NotificationPrompt />
       </AuthProvider>
     </Router>
   );

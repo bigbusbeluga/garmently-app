@@ -1,0 +1,246 @@
+/* Notification Prompt Styles */
+
+.notification-prompt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.notification-prompt {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+.notification-prompt-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounce 1s ease infinite;
+}
+
+.notification-prompt-icon i {
+  font-size: 36px;
+  color: white;
+}
+
+.notification-prompt h3 {
+  font-size: 24px;
+  margin: 0 0 12px;
+  color: #1a202c;
+  font-weight: 600;
+}
+
+.notification-prompt p {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0 0 24px;
+  line-height: 1.6;
+}
+
+.notification-prompt-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.notification-prompt-actions .btn-secondary,
+.notification-prompt-actions .btn-primary {
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-size: 14px;
+}
+
+.notification-prompt-actions .btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.notification-prompt-actions .btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+.notification-prompt-actions .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notification-prompt-actions .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Notification Toast (Foreground) */
+.notification-toast {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  z-index: 10002;
+  min-width: 300px;
+  max-width: 400px;
+  display: flex;
+  gap: 12px;
+  animation: slideInRight 0.3s ease;
+}
+
+.notification-toast-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notification-toast-icon i {
+  font-size: 18px;
+  color: white;
+}
+
+.notification-toast-content {
+  flex: 1;
+}
+
+.notification-toast-content h4 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  color: #1a202c;
+  font-weight: 600;
+}
+
+.notification-toast-content p {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.notification-toast-close {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.notification-toast-close:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .notification-toast {
+    right: 10px;
+    left: 10px;
+    min-width: unset;
+  }
+
+  .notification-prompt {
+    padding: 24px;
+  }
+
+  .notification-prompt-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .notification-prompt-icon i {
+    font-size: 28px;
+  }
+
+  .notification-prompt h3 {
+    font-size: 20px;
+  }
+
+  .notification-prompt-actions {
+    flex-direction: column;
+  }
+
+  .notification-prompt-actions .btn-secondary,
+  .notification-prompt-actions .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -715,6 +715,28 @@ def set_password(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+def save_fcm_token(request):
+    """Save Firebase Cloud Messaging token for push notifications"""
+    fcm_token = request.data.get('fcm_token')
+    
+    if not fcm_token:
+        return Response({
+            'error': 'FCM token is required'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Get or create profile
+    from .models import Profile
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    profile.fcm_token = fcm_token
+    profile.save()
+    
+    return Response({
+        'message': 'FCM token saved successfully',
+        'token': fcm_token
+    })
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def change_password(request):
     """Change user password"""
     user = request.user
