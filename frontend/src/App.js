@@ -24,6 +24,7 @@ function Layout({ children }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [notificationCount, setNotificationCount] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   
   const isActive = (path) => {
     return location.pathname === path ? 'nav-link active' : 'nav-link';
@@ -41,6 +42,18 @@ function Layout({ children }) {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showProfileMenu && !event.target.closest('.profile-dropdown-container')) {
+        setShowProfileMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showProfileMenu]);
 
   // Check for notifications
   useEffect(() => {
@@ -91,13 +104,62 @@ function Layout({ children }) {
               <span className="notification-badge">{notificationCount}</span>
             )}
           </button>
-          <Link to="/profile" className="profile-link" title="Profile">
-            <i className="fas fa-user"></i>
-            <span>{user?.username || 'User'}</span>
-          </Link>
-          <button onClick={handleLogout} className="logout-btn" title="Logout">
-            <i className="fas fa-sign-out-alt"></i>
-          </button>
+          
+          {/* Profile Dropdown */}
+          <div className="profile-dropdown-container">
+            <button 
+              onClick={() => setShowProfileMenu(!showProfileMenu)}
+              className="profile-btn"
+              title="Profile Menu"
+            >
+              <i className="fas fa-user-circle"></i>
+              <span>{user?.username || 'User'}</span>
+              <i className={`fas fa-chevron-${showProfileMenu ? 'up' : 'down'}`}></i>
+            </button>
+            
+            {showProfileMenu && (
+              <div className="profile-dropdown-menu">
+                <div className="dropdown-header">
+                  {user?.profile_picture ? (
+                    <img src={user.profile_picture} alt="Profile" className="dropdown-profile-pic" />
+                  ) : (
+                    <i className="fas fa-user-circle"></i>
+                  )}
+                  <div>
+                    <div className="dropdown-username">{user?.username || 'User'}</div>
+                    <div className="dropdown-email">{user?.email || ''}</div>
+                  </div>
+                </div>
+                <div className="dropdown-divider"></div>
+                <Link to="/profile" className="dropdown-item" onClick={() => setShowProfileMenu(false)}>
+                  <i className="fas fa-user"></i>
+                  <span>My Profile</span>
+                </Link>
+                <Link to="/profile" className="dropdown-item" onClick={() => setShowProfileMenu(false)}>
+                  <i className="fas fa-cog"></i>
+                  <span>Settings</span>
+                </Link>
+                <Link to="/profile" className="dropdown-item" onClick={() => setShowProfileMenu(false)}>
+                  <i className="fas fa-key"></i>
+                  <span>Change Password</span>
+                </Link>
+                <div className="dropdown-divider"></div>
+                <a href="mailto:support@garmently.com" className="dropdown-item">
+                  <i className="fas fa-question-circle"></i>
+                  <span>Get Help</span>
+                </a>
+                <a href="#" className="dropdown-item">
+                  <i className="fas fa-info-circle"></i>
+                  <span>About</span>
+                </a>
+                <div className="dropdown-divider"></div>
+                <button onClick={() => { handleLogout(); setShowProfileMenu(false); }} className="dropdown-item logout-item">
+                  <i className="fas fa-sign-out-alt"></i>
+                  <span>Logout</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
 

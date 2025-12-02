@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 
 function Profile() {
-  const { user, logout } = useAuth();
+  const { user, logout, refreshUser } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
@@ -89,14 +89,17 @@ function Profile() {
       formData.append('email', profileData.email);
       formData.append('first_name', profileData.first_name);
       formData.append('last_name', profileData.last_name);
-      formData.append('bio', profileData.bio);
+      formData.append('bio', profileData.bio || '');
       
       if (profileData.profile_picture instanceof File) {
         formData.append('profile_picture', profileData.profile_picture);
       }
 
-      await apiService.updateProfile(formData);
+      const response = await apiService.updateProfile(formData);
+      console.log('Profile update response:', response);
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
+      // Refresh user data in context
+      await refreshUser();
       setTimeout(() => setMessage(null), 3000);
     } catch (err) {
       console.error('Error updating profile:', err);

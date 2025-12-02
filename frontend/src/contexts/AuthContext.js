@@ -37,12 +37,24 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const refreshUser = async () => {
+    try {
+      const userData = await apiService.getCurrentUser();
+      localStorage.setItem('user', JSON.stringify(userData));
+      setUser(userData);
+      return userData;
+    } catch (error) {
+      console.error('Error refreshing user:', error);
+      throw error;
+    }
+  };
+
   const isAuthenticated = () => {
     return !!user && !!localStorage.getItem('token');
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

@@ -172,11 +172,8 @@ export const apiService = {
       localStorage.setItem('user', JSON.stringify(updated));
       return updated;
     }
-    const response = await api.patch('/api/auth/user/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    // Don't set Content-Type manually - let axios handle it for FormData
+    const response = await api.patch('/api/auth/user/', formData);
     return response.data;
   },
 
