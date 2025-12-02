@@ -9,6 +9,10 @@ function Inventory() {
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [categories, setCategories] = useState(['All', 'Favorites']);
+  const [editingItem, setEditingItem] = useState(null);
+  const [editForm, setEditForm] = useState({});
+  const [editImage, setEditImage] = useState(null);
+  const [deletingItem, setDeletingItem] = useState(null);
 
   useEffect(() => {
     document.title = 'Wardrobe - Garmently';
@@ -34,17 +38,19 @@ function Inventory() {
     }
   };
 
-  const handleDelete = async (itemId) => {
-    if (!window.confirm('Are you sure you want to delete this garment?')) {
-      return;
-    }
+  const handleDeleteClick = (item) => {
+    setDeletingItem(item);
+  };
 
+  const handleDeleteConfirm = async () => {
     try {
-      await apiService.deleteGarment(itemId);
-      setItems(items.filter(item => item.id !== itemId));
+      await apiService.deleteGarment(deletingItem.id);
+      setItems(items.filter(item => item.id !== deletingItem.id));
+      setDeletingItem(null);
     } catch (err) {
       console.error('Error deleting garment:', err);
       alert('Failed to delete garment. Please try again.');
+      setDeletingItem(null);
     }
   };
 
@@ -56,6 +62,57 @@ function Inventory() {
     } catch (err) {
       console.error('Error marking garment as worn:', err);
       alert('Failed to mark as worn. Please try again.');
+    }
+  };
+
+  const handleToggleFavorite = async (itemId) => {
+    try {
+      const updatedGarment = await apiService.toggleFavorite(itemId);
+      setItems(items.map(item => 
+        item.id === itemId ? updatedGarment : item
+      ));
+    } catch (err) {
+      console.error('Error toggling favorite:', err);
+      alert('Failed to toggle favorite. Please try again.');
+    }
+  };
+
+  const handleEditClick = (item) => {
+    setEditingItem(item);
+    setEditForm({
+      name: item.name,
+      category: item.category,
+      color: item.color,
+      size: item.size,
+      brand: item.brand || '',
+      status: item.status || 'clean'
+    });
+    setEditImage(null);
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append('name', editForm.name);
+      formData.append('category', editForm.category);
+      formData.append('color', editForm.color);
+      formData.append('size', editForm.size);
+      formData.append('brand', editForm.brand);
+      formData.append('status', editForm.status);
+      
+      if (editImage) {
+        formData.append('image', editImage);
+      }
+
+      await apiService.updateGarment(editingItem.id, formData);
+      setEditingItem(null);
+      setEditForm({});
+      setEditImage(null);
+      fetchItems();
+    } catch (err) {
+      console.error('Error updating garment:', err);
+      alert('Failed to update garment. Please try again.');
     }
   };
 
@@ -204,7 +261,18 @@ function Inventory() {
                   </div>
                   
                   <div className="garment-actions">
-                    <button className="btn-action btn-edit" title="Edit garment">
+                    <button 
+                      className={`btn-action btn-favorite ${item.is_favorite ? 'active' : ''}`}
+                      onClick={() => handleToggleFavorite(item.id)}
+                      title="Toggle favorite"
+                    >
+                      <i className={`fa${item.is_favorite ? 's' : 'r'} fa-heart`}></i>
+                    </button>
+                    <button 
+                      className="btn-action btn-edit" 
+                      onClick={() => handleEditClick(item)}
+                      title="Edit garment"
+                    >
                       <i className="fas fa-edit"></i>
                     </button>
                     <button 
@@ -212,11 +280,11 @@ function Inventory() {
                       onClick={() => handleWear(item.id)}
                       title="Mark as worn"
                     >
-                      <i className="fas fa-check"></i> Wear
+                      <i className="fas fa-check"></i>
                     </button>
                     <button 
                       className="btn-action btn-delete"
-                      onClick={() => handleDelete(item.id)}
+                      onClick={() => handleDeleteClick(item)}
                       title="Delete garment"
                     >
                       <i className="fas fa-trash"></i>
@@ -228,6 +296,118 @@ function Inventory() {
           </div>
         </div>
       </div>
+
+      {/* Edit Modal */}
+      {editingItem && (
+        <div className="modal-overlay" onClick={() => setEditingItem(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Edit Garment</h3>
+              <button className="modal-close" onClick={() => setEditingItem(null)}>
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+            <form onSubmit={handleEditSubmit}>
+              <div className="form-group">
+                <label>Name</label>
+                <input
+                  type="text"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({...editForm, name: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Color</label>
+                <input
+                  type="text"
+                  value={editForm.color}
+                  onChange={(e) => setEditForm({...editForm, color: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Size</label>
+                <input
+                  type="text"
+                  value={editForm.size}
+                  onChange={(e) => setEditForm({...editForm, size: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Brand</label>
+                <input
+                  type="text"
+                  value={editForm.brand}
+                  onChange={(e) => setEditForm({...editForm, brand: e.target.value})}
+                />
+              </div>
+              <div className="form-group">
+                <label>Status</label>
+                <select
+                  value={editForm.status}
+                  onChange={(e) => setEditForm({...editForm, status: e.target.value})}
+                  required
+                >
+                  <option value="clean">Clean</option>
+                  <option value="dirty">Dirty</option>
+                  <option value="washing">Washing</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>New Image (optional)</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setEditImage(e.target.files[0])}
+                />
+              </div>
+              <div className="modal-actions">
+                <button type="button" className="btn-secondary" onClick={() => setEditingItem(null)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn-primary">
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletingItem && (
+        <div className="modal-overlay" onClick={() => setDeletingItem(null)}>
+          <div className="modal-content modal-delete" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Delete Garment</h3>
+              <button className="modal-close" onClick={() => setDeletingItem(null)}>
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="delete-icon">
+                <i className="fas fa-exclamation-triangle"></i>
+              </div>
+              <p className="delete-message">
+                Are you sure you want to delete <strong>{deletingItem.name}</strong>?
+              </p>
+              <p className="delete-warning">
+                This action cannot be undone.
+              </p>
+            </div>
+            <div className="modal-actions">
+              <button className="btn-secondary" onClick={() => setDeletingItem(null)}>
+                Cancel
+              </button>
+              <button className="btn-danger" onClick={handleDeleteConfirm}>
+                <i className="fas fa-trash"></i> Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -318,6 +318,19 @@ export const apiService = {
     return response.data;
   },
 
+  toggleFavorite: async (id) => {
+    if (USE_MOCK_DATA) {
+      const garment = mockGarments.find(g => g.id === id);
+      if (garment) {
+        garment.is_favorite = !garment.is_favorite;
+        localStorage.setItem('demo_garments', JSON.stringify(mockGarments));
+      }
+      return garment;
+    }
+    const response = await api.post(`/api/garments-api/${id}/toggle_favorite/`);
+    return response.data;
+  },
+
   // Categories
   getCategories: async () => {
     if (USE_MOCK_DATA) {

@@ -823,6 +823,15 @@ class GarmentViewSet(ModelViewSet):
         return Response(serializer.data)
     
     @action(detail=True, methods=['post'])
+    def toggle_favorite(self, request, pk=None):
+        """Toggle favorite status"""
+        garment = self.get_object()
+        garment.is_favorite = not garment.is_favorite
+        garment.save()
+        serializer = self.get_serializer(garment)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['post'])
     def wear(self, request, pk=None):
         """Mark garment as worn"""
         garment = self.get_object()

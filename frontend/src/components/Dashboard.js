@@ -23,11 +23,14 @@ function Dashboard() {
   }, []);
 
   const fetchWeather = async () => {
+    console.log('Fetching weather...');
     try {
       // Get user's location
       if (navigator.geolocation) {
+        console.log('Geolocation supported, requesting position...');
         navigator.geolocation.getCurrentPosition(
           async (position) => {
+            console.log('Position received:', position.coords);
             const { latitude, longitude } = position.coords;
             await getWeatherData(latitude, longitude);
           },
@@ -39,6 +42,7 @@ function Dashboard() {
           }
         );
       } else {
+        console.log('Geolocation not supported');
         setLocationError('Geolocation not supported. Using default location.');
         getWeatherData(14.5995, 120.9842);
       }
@@ -49,15 +53,20 @@ function Dashboard() {
   };
 
   const getWeatherData = async (lat, lon) => {
+    console.log('Getting weather data for:', lat, lon);
     try {
-      const API_KEY = 'bac89a4fa88db130ba93790817e208b8'; // OpenWeatherMap API key
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
-      );
+      const API_KEY = '1a2e29061f7d759b5d32c8e8560a9ec2'; // OpenWeatherMap API key
+      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`;
+      console.log('Weather API URL:', url);
+      
+      const response = await fetch(url);
       const data = await response.json();
       
+      console.log('Weather API response:', data);
+      console.log('Response status:', response.status);
+      
       if (response.ok) {
-        setWeather({
+        const weatherData = {
           temp: Math.round(data.main.temp),
           feels_like: Math.round(data.main.feels_like),
           description: data.weather[0].description,
@@ -65,13 +74,19 @@ function Dashboard() {
           humidity: data.main.humidity,
           city: data.name,
           country: data.sys.country
-        });
+        };
+        console.log('Setting weather data:', weatherData);
+        setWeather(weatherData);
       } else {
-        console.error('Weather API error:', data);
+        console.error('Weather API error - Status:', response.status);
+        console.error('Error details:', data);
+        setLocationError(`Weather service unavailable: ${data.message || 'API key may be invalid'}`);
       }
     } catch (error) {
       console.error('Error fetching weather:', error);
+      setLocationError('Unable to fetch weather data');
     } finally {
+      console.log('Weather loading complete');
       setWeatherLoading(false);
     }
   };
