@@ -93,9 +93,14 @@ function AddGarment() {
       });
       setStream(mediaStream);
       setShowCamera(true);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-      }
+      
+      // Wait for next tick to ensure video element is rendered
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+          videoRef.current.play().catch(err => console.error('Error playing video:', err));
+        }
+      }, 100);
     } catch (error) {
       console.error('Error accessing camera:', error);
       setError('Unable to access camera. Please make sure you have granted camera permissions.');
@@ -581,7 +586,15 @@ function AddGarment() {
               </button>
             </div>
             <div className="camera-view">
-              <video ref={videoRef} autoPlay playsInline></video>
+              <video 
+                ref={videoRef} 
+                autoPlay 
+                playsInline
+                muted
+                onLoadedMetadata={() => {
+                  console.log('Video loaded, dimensions:', videoRef.current?.videoWidth, 'x', videoRef.current?.videoHeight);
+                }}
+              ></video>
               <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
             </div>
             <div className="camera-controls">
