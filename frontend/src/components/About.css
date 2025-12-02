@@ -1,0 +1,252 @@
+.about-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.about-header {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border-radius: 20px;
+  margin-bottom: 2rem;
+}
+
+.about-logo {
+  margin-bottom: 1.5rem;
+}
+
+.about-logo img {
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.about-header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2.5rem;
+  color: #1a202c;
+  font-weight: 700;
+}
+
+.tagline {
+  font-size: 1.2rem;
+  color: #4a5568;
+  margin: 0;
+  font-weight: 500;
+}
+
+.about-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.about-section {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+}
+
+.about-section:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 15px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.section-icon i {
+  font-size: 28px;
+  color: white;
+}
+
+.about-section h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.8rem;
+  color: #1a202c;
+  font-weight: 700;
+}
+
+.about-section p {
+  margin: 0 0 1rem 0;
+  line-height: 1.8;
+  color: #4a5568;
+  font-size: 1.05rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.feature-item {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 15px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.feature-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.feature-item i {
+  font-size: 2.5rem;
+  color: #667eea;
+  margin-bottom: 1rem;
+}
+
+.feature-item h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: #1a202c;
+  font-weight: 600;
+}
+
+.feature-item p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.tech-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.contact-section {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+  border: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.contact-info {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.contact-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  background: white;
+  color: #667eea;
+  border-radius: 50px;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.contact-email:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  background: #667eea;
+  color: white;
+}
+
+.contact-email i {
+  font-size: 1.3rem;
+}
+
+.response-time {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.version-section {
+  text-align: center;
+  background: rgba(248, 250, 252, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.version-info {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.copyright {
+  font-size: 0.95rem;
+  color: #4a5568;
+}
+
+.copyright i {
+  color: #e53e3e;
+  margin: 0 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .about-header {
+    padding: 2rem 1.5rem;
+  }
+
+  .about-header h1 {
+    font-size: 2rem;
+  }
+
+  .tagline {
+    font-size: 1rem;
+  }
+
+  .about-section {
+    padding: 1.5rem;
+  }
+
+  .about-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .tech-stack {
+    justify-content: center;
+  }
+
+  .contact-email {
+    font-size: 1rem;
+    padding: 0.875rem 1.5rem;
+  }
+}

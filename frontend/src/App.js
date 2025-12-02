@@ -14,6 +14,8 @@ import Laundry from './components/Laundry';
 import Profile from './components/Profile';
 import Notifications from './components/Notifications';
 import InstallPrompt from './components/InstallPrompt';
+import About from './components/About';
+import GetHelp from './components/GetHelp';
 import './App.css';
 
 // Layout Component with Sidebar
@@ -144,14 +146,14 @@ function Layout({ children }) {
                   <span>Change Password</span>
                 </Link>
                 <div className="dropdown-divider"></div>
-                <a href="mailto:support@garmently.com" className="dropdown-item">
+                <Link to="/help" className="dropdown-item" onClick={() => setShowProfileMenu(false)}>
                   <i className="fas fa-question-circle"></i>
                   <span>Get Help</span>
-                </a>
-                <a href="#" className="dropdown-item">
+                </Link>
+                <Link to="/about" className="dropdown-item" onClick={() => setShowProfileMenu(false)}>
                   <i className="fas fa-info-circle"></i>
                   <span>About</span>
-                </a>
+                </Link>
                 <div className="dropdown-divider"></div>
                 <button onClick={() => { handleLogout(); setShowProfileMenu(false); }} className="dropdown-item logout-item">
                   <i className="fas fa-sign-out-alt"></i>
@@ -305,6 +307,20 @@ function AppRoutes() {
         <ProtectedRoute>
           <Layout>
             <Profile />
+          </Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/about" element={
+        <ProtectedRoute>
+          <Layout>
+            <About />
+          </Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/help" element={
+        <ProtectedRoute>
+          <Layout>
+            <GetHelp />
           </Layout>
         </ProtectedRoute>
       } />
