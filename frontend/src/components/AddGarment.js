@@ -88,9 +88,27 @@ function AddGarment() {
 
   const startCamera = async () => {
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
-      });
+      // Try with environment camera first (back camera on mobile)
+      let mediaStream;
+      try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { 
+            facingMode: { ideal: 'environment' },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          }
+        });
+      } catch (err) {
+        // If environment camera fails, try any camera
+        console.log('Environment camera not available, trying any camera:', err);
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          }
+        });
+      }
+      
       setStream(mediaStream);
       setShowCamera(true);
       
@@ -103,7 +121,7 @@ function AddGarment() {
       }, 100);
     } catch (error) {
       console.error('Error accessing camera:', error);
-      setError('Unable to access camera. Please make sure you have granted camera permissions.');
+      setError('Unable to access camera. Please make sure you have granted camera permissions and try again.');
     }
   };
 
@@ -495,6 +513,15 @@ function AddGarment() {
                 accept="image/*"
                 style={{ display: 'none' }}
               />
+              <input
+                type="file"
+                id="image-camera"
+                name="image-camera"
+                onChange={handleImageChange}
+                accept="image/*"
+                capture="environment"
+                style={{ display: 'none' }}
+              />
               <button
                 type="button"
                 className="btn btn-sm btn-secondary"
@@ -504,14 +531,23 @@ function AddGarment() {
               </button>
               <button
                 type="button"
+                className="btn btn-sm btn-secondary mobile-camera-btn"
+                onClick={() => document.getElementById('image-camera').click()}
+              >
+                <i className="fas fa-camera"></i> Quick Capture
+              </button>
+              <button
+                type="button"
                 className="btn btn-sm btn-secondary"
                 onClick={startCamera}
               >
-                <i className="fas fa-camera"></i> Take Photo
+                <i className="fas fa-video"></i> Camera View
               </button>
             </div>
             <small className="form-text">
-              Upload or capture a photo of your garment. For best results with background removal, use images with solid/light backgrounds.
+              <strong>Quick Capture:</strong> Opens native camera app instantly (best for mobile). 
+              <strong>Camera View:</strong> In-app camera preview (works on most devices).
+              For best results with background removal, use images with solid/light backgrounds.
             </small>
             {imagePreview && (
               <div className="image-preview-container">
