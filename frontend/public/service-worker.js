@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-globals */
 
 // Service Worker for Garmently PWA
-const CACHE_NAME = 'garmently-v1';
+const CACHE_NAME = 'garmently-v2.1'; // Increment version to force cache update
 const urlsToCache = [
   '/',
   '/static/css/main.css',
