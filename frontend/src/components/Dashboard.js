@@ -51,31 +51,38 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <img src="/images/logo.png" alt="Garmently" style={{ width: '40px', height: '40px', marginRight: '1rem', verticalAlign: 'middle' }} />
         <h1><i className="fas fa-tachometer-alt"></i> Dashboard</h1>
       </div>
 
       {/* Stats Cards */}
       <div className="stats-grid">
         <div className="stat-card">
-          <i className="fas fa-tshirt stat-icon text-primary"></i>
-          <h3>{stats.total_garments}</h3>
-          <p>Total Garments</p>
+          <div className="stat-header">
+            <span className="stat-label">Total Garments</span>
+            <i className="fas fa-tshirt stat-icon"></i>
+          </div>
+          <div className="stat-value">{stats.total_garments}</div>
         </div>
         <div className="stat-card">
-          <i className="fas fa-check-circle stat-icon text-success"></i>
-          <h3>{stats.clean_garments}</h3>
-          <p>Clean Items</p>
+          <div className="stat-header">
+            <span className="stat-label">Clean Items</span>
+            <i className="fas fa-check-circle stat-icon text-success"></i>
+          </div>
+          <div className="stat-value">{stats.clean_garments}</div>
         </div>
         <div className="stat-card">
-          <i className="fas fa-soap stat-icon text-warning"></i>
-          <h3>{stats.dirty_garments}</h3>
-          <p>Dirty Items</p>
+          <div className="stat-header">
+            <span className="stat-label">Dirty Items</span>
+            <i className="fas fa-soap stat-icon text-warning"></i>
+          </div>
+          <div className="stat-value">{stats.dirty_garments}</div>
         </div>
         <div className="stat-card">
-          <i className="fas fa-heart stat-icon text-danger"></i>
-          <h3>{stats.favorite_garments}</h3>
-          <p>Favorites</p>
+          <div className="stat-header">
+            <span className="stat-label">Favorites</span>
+            <i className="fas fa-heart stat-icon text-danger"></i>
+          </div>
+          <div className="stat-value">{stats.favorite_garments}</div>
         </div>
       </div>
 
@@ -84,7 +91,7 @@ function Dashboard() {
         {/* Recent Garments */}
         <div className="dashboard-card">
           <div className="card-header">
-            <h5><i className="fas fa-clock"></i> Recent Garments</h5>
+            <h5>Recent Garments</h5>
             <Link to="/wardrobe" className="btn-view-all">View All</Link>
           </div>
           <div className="card-body">
@@ -122,7 +129,7 @@ function Dashboard() {
         {/* Recent Outfits */}
         <div className="dashboard-card">
           <div className="card-header">
-            <h5><i className="fas fa-users"></i> Recent Outfits</h5>
+            <h5>Recent Outfits</h5>
             <Link to="/outfits" className="btn-view-all">View All</Link>
           </div>
           <div className="card-body">
@@ -136,24 +143,24 @@ function Dashboard() {
       {/* Quick Actions */}
       <div className="dashboard-card">
         <div className="card-header">
-          <h5><i className="fas fa-bolt"></i> Quick Actions</h5>
+          <h5>Quick Actions</h5>
         </div>
         <div className="card-body">
           <div className="quick-actions">
-            <Link to="/add-garment" className="action-btn btn-primary">
+            <Link to="/add-garment" className="action-btn">
               <i className="fas fa-plus"></i>
               <span>Add Garment</span>
             </Link>
-            <Link to="/mixmatch" className="action-btn btn-success">
-              <i className="fas fa-users"></i>
+            <Link to="/mixmatch" className="action-btn">
+              <i className="fas fa-palette"></i>
               <span>Create Outfit</span>
             </Link>
-            <Link to="/laundry" className="action-btn btn-warning">
+            <Link to="/laundry" className="action-btn">
               <i className="fas fa-soap"></i>
               <span>Laundry ({stats.dirty_garments})</span>
             </Link>
-            <Link to="/mixmatch" className="action-btn btn-info">
-              <i className="fas fa-magic"></i>
+            <Link to="/mixmatch" className="action-btn">
+              <i className="fas fa-wand-magic-sparkles"></i>
               <span>Mix & Match</span>
             </Link>
           </div>

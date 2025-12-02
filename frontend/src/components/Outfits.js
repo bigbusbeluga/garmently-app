@@ -201,7 +201,7 @@ function Outfits() {
   return (
     <div className="outfits-page">
       <div className="outfits-header">
-        <h1><img src="/images/logo.png" alt="Garmently" style={{ width: '35px', height: '35px', marginRight: '0.8rem', verticalAlign: 'middle' }} /><i className="fas fa-users"></i> My Outfits</h1>
+        <h1>My Outfits</h1>
         <p>View and manage your saved outfit combinations</p>
       </div>
 
@@ -219,8 +219,8 @@ function Outfits() {
               <i className="fas fa-users fa-4x"></i>
               <h2>No outfits yet</h2>
               <p>Create your first outfit in Mix & Match!</p>
-              <a href="/mixmatch" className="btn btn-primary">
-                <i className="fas fa-magic"></i> Go to Mix & Match
+              <a href="/mixmatch" className="empty-state-link">
+                Go to Mix & Match
               </a>
             </div>
           ) : (

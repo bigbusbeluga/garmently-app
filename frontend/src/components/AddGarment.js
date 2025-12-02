@@ -252,7 +252,7 @@ function AddGarment() {
     <div className="add-garment-page">
       <div className="form-card">
         <div className="form-header">
-          <h2><img src="/images/logo.png" alt="Garmently" style={{ width: '32px', height: '32px', marginRight: '0.8rem', verticalAlign: 'middle' }} /><i className="fas fa-plus"></i> Add New Garment</h2>
+          <h2>Add New Garment</h2>
         </div>
         
         <form onSubmit={handleSubmit} className="garment-form">
@@ -431,7 +431,6 @@ function AddGarment() {
             />
             <small className="form-text">
               Upload a photo of your garment. For best results with background removal, use images with solid/light backgrounds.
-              Get a free API key from <a href="https://www.remove.bg/users/sign_up" target="_blank" rel="noopener noreferrer">remove.bg</a> for better results.
             </small>
             {imagePreview && (
               <div className="image-preview-container">

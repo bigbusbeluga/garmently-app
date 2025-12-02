@@ -120,10 +120,8 @@ function Inventory() {
   return (
     <div className="wardrobe-page">
       <div className="wardrobe-header">
-        <h1><img src="/images/logo.png" alt="Garmently" style={{ width: '35px', height: '35px', marginRight: '0.8rem', verticalAlign: 'middle' }} /><i className="fas fa-tshirt"></i> My Wardrobe</h1>
-        <Link to="/add-garment" className="btn btn-add-minimal" title="Add Garment">
-          <i className="fas fa-plus"></i>
-        </Link>
+        <h1><i className="fas fa-tshirt"></i> My Wardrobe</h1>
+        <p>Manage your digital closet</p>
       </div>
 
       <div className="wardrobe-content">
@@ -158,8 +156,8 @@ function Inventory() {
                 <i className="fas fa-tshirt fa-4x"></i>
                 <h2>No garments found</h2>
                 <p>Start building your digital wardrobe!</p>
-                <Link to="/add-garment" className="btn btn-primary">
-                  <i className="fas fa-plus"></i> Add Your First Garment
+                <Link to="/add-garment" className="empty-state-link">
+                  Add your first garment
                 </Link>
               </div>
             ) : (

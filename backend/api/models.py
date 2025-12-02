@@ -4,6 +4,17 @@ from django.utils import timezone
 import random
 import string
 
+class Profile(models.Model):
+    """Extended user profile"""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    bio = models.TextField(max_length=500, blank=True)
+    profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.user.username}'s profile"
+
 class EmailVerification(models.Model):
     """Store email verification codes"""
     email = models.EmailField()

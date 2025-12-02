@@ -131,15 +131,19 @@
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .btn-magic {
-  background: rgba(99, 102, 241, 0.9);
+  background: rgba(99, 102, 241, 1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(99, 102, 241, 0.3);
   color: white;
   font-weight: 600;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .btn-magic:hover:not(:disabled) {

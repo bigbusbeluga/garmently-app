@@ -1,28 +1,65 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Category, Garment, Outfit, LaundryItem, WearHistory
+from .models import Category, Garment, Outfit, LaundryItem, WearHistory, Profile
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for User model"""
-    profile_picture = serializers.ImageField(required=False, allow_null=True)
-    bio = serializers.CharField(required=False, allow_blank=True, max_length=500)
+    profile_picture = serializers.ImageField(required=False, allow_null=True, write_only=True)
+    profile_picture_url = serializers.SerializerMethodField()
+    bio = serializers.CharField(required=False, allow_blank=True, max_length=500, write_only=True)
+    bio_value = serializers.SerializerMethodField()
     has_usable_password = serializers.SerializerMethodField()
     
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'profile_picture', 'bio', 'has_usable_password']
-        read_only_fields = ['id', 'has_usable_password']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'profile_picture', 'profile_picture_url', 'bio', 'bio_value', 'has_usable_password']
+        read_only_fields = ['id', 'has_usable_password', 'profile_picture_url', 'bio_value']
     
     def get_has_usable_password(self, obj):
         """Check if user has a usable password (not OAuth-only account)"""
         return obj.has_usable_password()
     
+    def get_profile_picture_url(self, obj):
+        """Get profile picture URL from profile"""
+        if hasattr(obj, 'profile') and obj.profile.profile_picture:
+            return obj.profile.profile_picture.url
+        return None
+    
+    def get_bio_value(self, obj):
+        """Get bio from profile"""
+        if hasattr(obj, 'profile'):
+            return obj.profile.bio
+        return ''
+    
+    def update(self, instance, validated_data):
+        """Update user and profile"""
+        profile_picture = validated_data.pop('profile_picture', None)
+        bio = validated_data.pop('bio', None)
+        
+        # Update user fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        
+        # Update or create profile
+        profile, created = Profile.objects.get_or_create(user=instance)
+        if profile_picture is not None:
+            profile.profile_picture = profile_picture
+        if bio is not None:
+            profile.bio = bio
+        profile.save()
+        
+        return instance
+    
     def to_representation(self, instance):
-        """Add profile_picture and bio from profile if exists"""
+        """Return profile data properly"""
         data = super().to_representation(instance)
-        # Add empty fields for profile picture and bio (can be extended with Profile model)
-        data['profile_picture'] = None
-        data['bio'] = ''
+        # Map the fields to frontend expectations
+        data['profile_picture'] = self.get_profile_picture_url(instance)
+        data['bio'] = self.get_bio_value(instance)
+        # Remove write-only fields from response
+        data.pop('profile_picture_url', None)
+        data.pop('bio_value', None)
         return data
 
 class RegisterSerializer(serializers.ModelSerializer):
